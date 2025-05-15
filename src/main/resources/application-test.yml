@@ -1,0 +1,7 @@
+#application-test.yml （测试环境）
+spring:
+  config:
+    activate:
+      on-profile: test
+server:
+  port: 8082

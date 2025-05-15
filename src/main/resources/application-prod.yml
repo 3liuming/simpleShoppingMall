@@ -1,0 +1,7 @@
+# application-prod.yml （生产环境）
+spring:
+  config:
+    activate:
+      on-profile: prod
+server:
+  port: 8083

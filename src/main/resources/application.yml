@@ -1,0 +1,23 @@
+#公共配置
+spring:
+  application:
+    name: simpleShoppingMall
+#默认激活的profile
+  profiles:
+    active: dev
+#数据库配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/simpleshoppingmall
+    username: root
+    password: 240016
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+#Mybatis配置
+mybatis-plus:
+  mapper-locations: classpath:/Mapper/*.xml
+  type-aliases-package: com.itheima.simpleShoppingMallDemo.Model
+  configuration:
+    map-underscore-to-camel-case: true
+
+
+#debug: true

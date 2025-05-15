@@ -1,0 +1,12 @@
+# application-dev.yml （开发环境）
+spring:
+  config:
+    activate:
+      on-profile: dev
+  devtools:
+    restart:
+      enabled: false
+server:
+  port: 8081
+
+
