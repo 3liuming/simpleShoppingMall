@@ -10,4 +10,6 @@ import java.util.List;
 @Service
 public interface ProductService extends IService<Product> {
     IPage<Product> selProducts(Integer page,Integer perpage);
+
+    IPage<Product> selProductsByCategoryId(Integer page, Integer perPage,Long categoryId);
 }

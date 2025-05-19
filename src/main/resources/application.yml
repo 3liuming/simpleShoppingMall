@@ -18,6 +18,8 @@ mybatis-plus:
   type-aliases-package: com.itheima.simpleShoppingMallDemo.Model
   configuration:
     map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
 
 
 #debug: true
