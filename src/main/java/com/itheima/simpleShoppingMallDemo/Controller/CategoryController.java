@@ -2,6 +2,7 @@ package com.itheima.simpleShoppingMallDemo.Controller;
 
 import com.itheima.simpleShoppingMallDemo.Model.Category;
 import com.itheima.simpleShoppingMallDemo.Service.CategoryService;
+import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,7 @@ public class CategoryController {
     CategoryService categoryService;
 
     @GetMapping("/list")
-    public List<Category> getList(){
-        return categoryService.selCategories();
+    public Result<List<Category>> getList(){
+        return Result.success(categoryService.selCategories());
     }
 }
