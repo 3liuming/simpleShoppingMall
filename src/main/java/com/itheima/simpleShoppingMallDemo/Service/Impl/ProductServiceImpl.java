@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.simpleShoppingMallDemo.Mapper.ProductMapper;
 import com.itheima.simpleShoppingMallDemo.Model.Product;
 import com.itheima.simpleShoppingMallDemo.Service.ProductService;
+import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,15 +19,15 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     ProductMapper productMapper;
 
     @Override
-    public IPage<Product> selProducts(Integer page, Integer perPage){
+    public Result<IPage<Product>> selProducts(Integer page, Integer perPage){
         Page<Product> productPage = new Page<>(page, perPage);
-        return productMapper.selectPage(productPage,null);
+        return Result.success(productMapper.selectPage(productPage,null));
     }
     @Override
-    public IPage<Product> selProductsByCategoryId(Integer page, Integer perPage,Long categoryId) {
+    public Result<IPage<Product>> selProductsByCategoryId(Integer page, Integer perPage,Long categoryId) {
         LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<>();
         Page<Product> productPage = new Page<>(page, perPage);
         wrapper.eq(Product::getCategoryId, categoryId);
-        return productMapper.selectPage(productPage,wrapper);
+        return Result.success(productMapper.selectPage(productPage,wrapper));
     }
 }

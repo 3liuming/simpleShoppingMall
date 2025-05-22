@@ -18,13 +18,13 @@ public class ProductController {
     @GetMapping("/list")
     public Result<IPage<Product>> getList(@RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
                           @RequestParam(name = "perPage", required = false, defaultValue = "10") Integer perPage){
-        return Result.success(productService.selProducts(page,perPage));
+        return Result.success(productService.selProducts(page,perPage).getData());
     }
 
     @GetMapping("/bycategory")
     public Result<IPage<Product>> getProductByCategoyrId(@RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
                                                  @RequestParam(name = "perPage", required = false, defaultValue = "10") Integer perPage,
                                                  @RequestParam(name = "categoryId", required = false, defaultValue = "1") Long categoryId){
-        return Result.success(productService.selProductsByCategoryId(page,perPage,categoryId));
+        return Result.success(productService.selProductsByCategoryId(page,perPage,categoryId).getData());
     }
 }

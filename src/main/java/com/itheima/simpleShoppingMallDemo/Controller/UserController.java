@@ -14,15 +14,15 @@ public class UserController {
 
     @GetMapping("/ifRepeat")
     public Result<Integer> selUserByName(@RequestParam("username") String username) {
-        return Result.success(userService.isUsernameExist(username) ? 1 : 0);
+        return Result.success(userService.isUsernameExist(username).getData() ? 1 : 0);
     }
     @PostMapping("/verify")
     public Result<Integer> selUserByNameAndPwd(@RequestBody User user){
-        return Result.success(userService.verifyUsernameAndPassword(user.getUsername(), user.getPassword()) ? 1 : 0);
+        return Result.success(userService.verifyUsernameAndPassword(user.getUsername(), user.getPassword()).getData() ? 1 : 0);
     }
 
     @PostMapping("/register")
     public Result<Integer> regUserByNameAndPwd(@RequestBody User user){
-        return Result.success(userService.registerUser(user) ? 1 : 0);
+        return Result.success(userService.registerUser(user).getData() ? 1 : 0);
     }
 }
