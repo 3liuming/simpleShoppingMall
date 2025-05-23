@@ -6,7 +6,7 @@ import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface UserService extends IService<User> {
+public interface LoginService extends IService<User> {
 
     Result<Boolean> isUsernameExist(String username);
 

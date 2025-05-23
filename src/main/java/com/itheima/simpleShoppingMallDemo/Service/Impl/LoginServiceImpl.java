@@ -3,16 +3,15 @@ package com.itheima.simpleShoppingMallDemo.Service.Impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.simpleShoppingMallDemo.Mapper.UserMapper;
 import com.itheima.simpleShoppingMallDemo.Model.User;
-import com.itheima.simpleShoppingMallDemo.Service.UserService;
+import com.itheima.simpleShoppingMallDemo.Service.LoginService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-
-@Service("UserService")
-public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-        implements UserService {
+@Transactional
+@Service("loginService")
+public class LoginServiceImpl extends ServiceImpl<UserMapper, User>
+        implements LoginService {
 
     @Override
     public Result<Boolean> isUsernameExist(String username) {
@@ -31,7 +30,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public Result<Boolean> registerUser(User user) {
-        if (isUsernameExist(user.getUsername()).getData()) {
+        if (isUsernameExist(user.getUsername()).getData() != null) {
             return Result.fail("用户名重复");
         }
         return Result.success(save(user));

@@ -20,6 +20,7 @@ public class CorsConfig {
         config.addAllowedHeader("*");  // 允许所有请求头
         config.addAllowedMethod("GET");  // 允许 GET 请求
         config.addAllowedMethod("POST"); // 允许 POST 请求
+        config.addAllowedMethod("PUT");//允许 PUT 请求
         source.registerCorsConfiguration("/**", config);  // 全局生效
 
         return new CorsFilter(source);
