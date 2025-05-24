@@ -3,6 +3,7 @@ package com.itheima.simpleShoppingMallDemo.Controller;
 import com.itheima.simpleShoppingMallDemo.Model.UserDto;
 import com.itheima.simpleShoppingMallDemo.Service.ProfileService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,8 @@ public class ProfileController {
     ProfileService profileService;
 
     @GetMapping("/userinfo")
-    public Result<UserDto> selUserByUsername(@RequestParam("username") String username){
+    public Result<UserDto> selUserByUsername(HttpServletRequest request){
+        String username = (String)request.getAttribute("username");
         return Result.success(profileService.selUserByUsername(username).getData());
     }
 
