@@ -57,6 +57,9 @@ public class JwtTokenUtil {
                 .getSubject();
     }
 
+    /**
+     * 从 Token 中提取用户id
+     */
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
