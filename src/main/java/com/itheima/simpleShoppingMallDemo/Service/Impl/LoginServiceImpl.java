@@ -21,11 +21,17 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public Result<Boolean> verifyUsernameAndPassword(String username, String password) {
-        return Result.success(lambdaQuery()
+    public Result<Long> verifyUsernameAndPassword(String username, String password) {
+        User user = lambdaQuery()
                 .eq(User::getUsername, username)
                 .eq(User::getPassword, password)
-                .count() > 0);
+                .one();
+
+        if (user != null) {
+            return Result.success(user.getUserId()); // 登录成功，返回 userId
+        } else {
+            return Result.fail("用户名或密码错误"); // 登录失败
+        }
     }
 
     @Override

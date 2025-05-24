@@ -21,9 +21,9 @@ public class LoginController {
     }
     @PostMapping("/verify")
     public Result<String> selUserByNameAndPwd(@RequestBody User user){
-
-        if(loginService.verifyUsernameAndPassword(user.getUsername(), user.getPassword()).getData() ? true : false){
-            return Result.success(jwtTokenUtil.generateToken(user.getUsername(), user.getUserId()));
+        Long userId = loginService.verifyUsernameAndPassword(user.getUsername(), user.getPassword()).getData();
+        if(userId != null){
+            return Result.success(jwtTokenUtil.generateToken(user.getUsername(), userId));
         }else {
             return Result.fail("注册失败");
         }
