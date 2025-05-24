@@ -23,7 +23,7 @@ public class LoginController {
     public Result<String> selUserByNameAndPwd(@RequestBody User user){
 
         if(loginService.verifyUsernameAndPassword(user.getUsername(), user.getPassword()).getData() ? true : false){
-            return Result.success(jwtTokenUtil.generateToken(user.getUsername()));
+            return Result.success(jwtTokenUtil.generateToken(user.getUsername(), user.getUserId()));
         }else {
             return Result.fail("注册失败");
         }

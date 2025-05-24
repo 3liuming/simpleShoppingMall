@@ -30,10 +30,11 @@ public class JwtTokenUtil {
      * @param username 用户名（也可以放入用户 ID、角色等）
      * @return 带签名、带过期时间的完整 JWT
      */
-    public String generateToken(String username) {
+    public String generateToken(String username,Long userId) {
         Date now = new Date();
         return Jwts.builder()
                 .setSubject(username)                         // 放入主体
+                .claim("userId", userId)                  // 自定义字段
                 .setIssuedAt(now)                             // 签发时间
                 .setExpiration(new Date(now.getTime() + EXPIRATION * 1_000)) // 过期时间
                 .signWith(key, SignatureAlgorithm.HS512)      // 使用 HS512 算法与 key 签名
@@ -54,6 +55,15 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token)        // 解析并验证签名与过期
                 .getBody()
                 .getSubject();
+    }
+
+    public Long getUserIdFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("userId", Long.class);
     }
 
     /**
