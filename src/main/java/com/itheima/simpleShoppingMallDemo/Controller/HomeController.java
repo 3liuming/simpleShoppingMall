@@ -5,11 +5,9 @@ import com.itheima.simpleShoppingMallDemo.Model.Category;
 import com.itheima.simpleShoppingMallDemo.Model.Product;
 import com.itheima.simpleShoppingMallDemo.Service.HomeService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,5 +33,12 @@ public class HomeController {
                                                  @RequestParam(name = "perPage", required = false, defaultValue = "10") Integer perPage,
                                                  @RequestParam(name = "categoryId", required = false, defaultValue = "1") Long categoryId){
         return Result.success(homeService.selProductsByCategoryId(page,perPage,categoryId).getData());
+    }
+
+    @PostMapping("/addcart")
+    public Result<Boolean> addCartWithPidAndUid(@RequestParam("productId") Long productId,HttpServletRequest request){
+        Long userId = (Long) request.getAttribute("userId");
+        System.out.println(productId);
+        return homeService.addCartWithPidAndUid(userId,productId);
     }
 }

@@ -13,7 +13,7 @@ public class Order {
     private Long orderId;
     private Long userId;
     private BigDecimal totalPrice;
-    private String status;
+    private Long status;
     @TableField(fill = FieldFill.INSERT)
     private Timestamp createdAt;
     @TableField(fill = FieldFill.INSERT_UPDATE)

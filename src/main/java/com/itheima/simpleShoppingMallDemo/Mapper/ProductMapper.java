@@ -1,7 +1,7 @@
 package com.itheima.simpleShoppingMallDemo.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.itheima.simpleShoppingMallDemo.Model.CartProductDto;
+import com.itheima.simpleShoppingMallDemo.ModelDto.CartProductDto;
 import com.itheima.simpleShoppingMallDemo.Model.Product;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

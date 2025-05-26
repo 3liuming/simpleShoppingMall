@@ -14,6 +14,7 @@ public interface HomeService extends IService<Product> {
 
     Result<List<Category>> selCategories();
     Result<IPage<Product>> selProducts(Integer page, Integer perpage);
-
     Result<IPage<Product>> selProductsByCategoryId(Integer page, Integer perPage,Long categoryId);
+
+    Result<Boolean> addCartWithPidAndUid(Long userId,Long productId);
 }

@@ -1,4 +1,4 @@
-package com.itheima.simpleShoppingMallDemo.Model;
+package com.itheima.simpleShoppingMallDemo.ModelDto;
 
 import lombok.Data;
 

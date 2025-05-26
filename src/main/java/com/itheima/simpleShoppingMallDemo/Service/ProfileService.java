@@ -1,6 +1,6 @@
 package com.itheima.simpleShoppingMallDemo.Service;
 
-import com.itheima.simpleShoppingMallDemo.Model.UserDto;
+import com.itheima.simpleShoppingMallDemo.ModelDto.UserDto;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,6 @@
 package com.itheima.simpleShoppingMallDemo.Controller;
 
-import com.itheima.simpleShoppingMallDemo.Model.CartProductDto;
-import com.itheima.simpleShoppingMallDemo.Model.Product;
+import com.itheima.simpleShoppingMallDemo.ModelDto.CartProductDto;
 import com.itheima.simpleShoppingMallDemo.Service.CartService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import jakarta.servlet.http.HttpServletRequest;

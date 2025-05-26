@@ -1,7 +1,7 @@
 package com.itheima.simpleShoppingMallDemo.Service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.itheima.simpleShoppingMallDemo.Model.CartProductDto;
+import com.itheima.simpleShoppingMallDemo.ModelDto.CartProductDto;
 import com.itheima.simpleShoppingMallDemo.Model.Product;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.stereotype.Service;

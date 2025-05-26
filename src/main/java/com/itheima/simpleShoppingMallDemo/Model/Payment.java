@@ -14,7 +14,7 @@ public class Payment {
     private Long orderId;
     private BigDecimal amount;
     private String paymentMethod;
-    private String status;
+    private Long status;
     @TableField(fill = FieldFill.INSERT)
     private Timestamp createdAt;
     @TableField(fill = FieldFill.INSERT_UPDATE)

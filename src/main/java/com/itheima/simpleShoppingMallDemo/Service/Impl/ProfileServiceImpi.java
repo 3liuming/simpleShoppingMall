@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.simpleShoppingMallDemo.Mapper.UserMapper;
 import com.itheima.simpleShoppingMallDemo.Model.User;
-import com.itheima.simpleShoppingMallDemo.Model.UserDto;
+import com.itheima.simpleShoppingMallDemo.ModelDto.UserDto;
 import com.itheima.simpleShoppingMallDemo.Service.ProfileService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.beans.BeanUtils;

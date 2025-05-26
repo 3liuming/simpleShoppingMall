@@ -2,7 +2,7 @@ package com.itheima.simpleShoppingMallDemo.Service.Impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.simpleShoppingMallDemo.Mapper.ProductMapper;
-import com.itheima.simpleShoppingMallDemo.Model.CartProductDto;
+import com.itheima.simpleShoppingMallDemo.ModelDto.CartProductDto;
 import com.itheima.simpleShoppingMallDemo.Model.Product;
 import com.itheima.simpleShoppingMallDemo.Service.CartService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
