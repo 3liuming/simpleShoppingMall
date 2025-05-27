@@ -110,9 +110,8 @@ public class BuyServiceImpl extends ServiceImpl<OrderMapper, Order> implements B
             throw new RuntimeException("余额不足，或值为空/无效");
         }
 
-        BigDecimal endBalance = BigDecimal.ZERO;
         Payment payment = new Payment();
-        endBalance = user.getBalance().subtract(order.getTotalPrice());
+        BigDecimal endBalance = user.getBalance().subtract(order.getTotalPrice());
 
         payment.setUserId(userId);
         payment.setOrderId(order.getOrderId());

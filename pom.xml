@@ -44,6 +44,13 @@
             <version>3.5.7</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-extension</artifactId>
+            <version>3.5.7</version>
+        </dependency>
+
+
         <!-- MySQL JDBC 驱动（如果你使用 MySQL 数据库） -->
         <dependency>
             <groupId>com.mysql</groupId>

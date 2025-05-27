@@ -25,6 +25,7 @@ public interface OrderMapper extends BaseMapper<Order> {
             JOIN order_items oi ON o.order_id = oi.order_id
             JOIN products p ON oi.product_id = p.product_id
             WHERE o.user_id = #{userId}
+            AND o.hidden = 0
             """)
      List<OrderDto> selAllOrderByUserId(@Param("userId") Long userId);
     @Select("""
@@ -42,6 +43,7 @@ public interface OrderMapper extends BaseMapper<Order> {
             JOIN products p ON oi.product_id = p.product_id
             WHERE o.user_id = #{userId}
             AND o.status = 1
+            AND o.hidden = 0
             """)
      List<OrderDto> selPaidOrderByUserId(@Param("userId")Long userId);
     @Select("""
@@ -59,6 +61,7 @@ public interface OrderMapper extends BaseMapper<Order> {
             JOIN products p ON oi.product_id = p.product_id
             WHERE o.user_id = #{userId}
             AND o.status = 0
+            AND o.hidden = 0
             """)
     List<OrderDto> selUnpaidOrderByUserId(@Param("userId")Long userId);
 }

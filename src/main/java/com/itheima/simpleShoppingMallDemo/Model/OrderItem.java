@@ -2,6 +2,7 @@ package com.itheima.simpleShoppingMallDemo.Model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -16,5 +17,7 @@ public class OrderItem {
     private Long productId;
     private Integer quantity;
     private BigDecimal price;
+    @TableLogic
+    private Integer hidden;
 }
 

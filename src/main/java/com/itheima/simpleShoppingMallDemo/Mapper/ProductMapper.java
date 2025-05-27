@@ -26,6 +26,7 @@ public interface ProductMapper extends BaseMapper<Product> {
             INNER JOIN cart_items c
               ON p.product_id = c.product_id
             WHERE c.user_id = #{userId}
+            AND c.hidden = 0
             """)
     List<CartProductDto> selectByUserId(@Param("userId") Long userId);
 }

@@ -18,5 +18,7 @@ public class Order {
     private Timestamp createdAt;
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Timestamp updatedAt;
+    @TableLogic
+    private Integer hidden;
 }
 

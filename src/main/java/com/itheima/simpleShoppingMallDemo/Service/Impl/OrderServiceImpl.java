@@ -8,6 +8,7 @@ import com.itheima.simpleShoppingMallDemo.Service.OrderService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -51,5 +52,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }else{
             return Result.fail("查询结果为空");
         }
+    }
+
+    @Override
+    public Result<Boolean> createPaymentByUserIdAndOrderId(Long userId,Long OrderId){
+        return Result.success();
+    }
+
+    @Override
+    public Result<Boolean> deleteOrderByOrderId(Long OrderId){
+        return Result.success();
     }
 }

@@ -5,9 +5,7 @@ import com.itheima.simpleShoppingMallDemo.Service.OrderService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -46,5 +44,16 @@ public class OrderController {
         }else {
             return Result.fail("返回结果为空");
         }
+    }
+
+    @PostMapping("/buy")
+    public Result<Boolean> createPaymentByUserIdAndOrderId(@RequestParam("orderId") Long orderId,
+                                                           HttpServletRequest request){
+        return orderService.createPaymentByUserIdAndOrderId((Long) request.getAttribute("userId"),orderId);
+    }
+
+    @PostMapping("/delete")
+    public Result<Boolean> deleteOrderByOrderId(@RequestParam("orderId") Long orderId){
+        return orderService.deleteOrderByOrderId(orderId);
     }
 }
