@@ -31,6 +31,6 @@ public class BuyController {
     @PostMapping("/nowbuy")
     public Result<Boolean> CreatePaymentByUserNameAndQuantityAndPid(@RequestBody OrderItem orderItem,
                                                                     HttpServletRequest request){
-        return Result.success();
+        return buyService.createPaymentByUsernameAndQuantityAndPid((Long)request.getAttribute("userId"),orderItem);
     }
 }
