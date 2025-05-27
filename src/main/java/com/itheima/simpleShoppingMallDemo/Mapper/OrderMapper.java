@@ -3,7 +3,6 @@ package com.itheima.simpleShoppingMallDemo.Mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.itheima.simpleShoppingMallDemo.Model.Order;
 import com.itheima.simpleShoppingMallDemo.ModelDto.OrderDto;
-import com.itheima.simpleShoppingMallDemo.ModelDto.UserProductDto;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 

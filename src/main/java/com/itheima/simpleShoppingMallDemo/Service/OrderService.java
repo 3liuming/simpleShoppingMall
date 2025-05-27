@@ -17,7 +17,7 @@ public interface OrderService extends IService<Order> {
 
     Result<List<OrderDto>> selUnpaidOrderByUserId(Long userId);
 
-    Result<Boolean> createPaymentByUserIdAndOrderId(Long userId,Long OrderId);
+    Result<Boolean> createPaymentByUserIdAndOrderId(Long OrderId);
 
     Result<Boolean> deleteOrderByOrderId(Long OrderId);
 }

@@ -47,12 +47,11 @@ public class OrderController {
     }
 
     @PostMapping("/buy")
-    public Result<Boolean> createPaymentByUserIdAndOrderId(@RequestParam("orderId") Long orderId,
-                                                           HttpServletRequest request){
-        return orderService.createPaymentByUserIdAndOrderId((Long) request.getAttribute("userId"),orderId);
+    public Result<Boolean> createPaymentByUserIdAndOrderId(@RequestParam("orderId") Long orderId){
+        return orderService.createPaymentByUserIdAndOrderId(orderId);
     }
 
-    @PostMapping("/delete")
+    @PutMapping("/delete")
     public Result<Boolean> deleteOrderByOrderId(@RequestParam("orderId") Long orderId){
         return orderService.deleteOrderByOrderId(orderId);
     }
