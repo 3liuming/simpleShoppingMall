@@ -10,8 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/buy")
 public class BuyController {
@@ -28,5 +26,11 @@ public class BuyController {
     public Result<Boolean> createOrderByUsernameAndQuantityAndPid(@RequestBody OrderItem orderItem,
                                                                   HttpServletRequest request){
         return buyService.createOrderByUsernameAndQuantityAndPid((Long)request.getAttribute("userId"),orderItem);
+    }
+
+    @PostMapping("/nowbuy")
+    public Result<Boolean> CreatePaymentByUserNameAndQuantityAndPid(@RequestBody OrderItem orderItem,
+                                                                    HttpServletRequest request){
+        return Result.success();
     }
 }

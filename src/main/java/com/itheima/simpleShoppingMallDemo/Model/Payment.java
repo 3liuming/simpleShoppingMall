@@ -12,8 +12,8 @@ public class Payment {
     @TableId(value = "payment_id", type = IdType.AUTO)
     private Long paymentId;
     private Long orderId;
+    private Long userId;
     private BigDecimal amount;
-    private String paymentMethod;
     private Long status;
     @TableField(fill = FieldFill.INSERT)
     private Timestamp createdAt;

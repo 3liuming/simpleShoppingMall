@@ -14,4 +14,6 @@ public interface BuyService extends IService<Order> {
 
     Result<Boolean> createOrderByUsernameAndQuantityAndPid(Long userId, OrderItem orderItem);
 
+    Result<Boolean> createPaymentByUsernameAndQuantityAndPid(Long userId, OrderItem orderItem);
+
 }
