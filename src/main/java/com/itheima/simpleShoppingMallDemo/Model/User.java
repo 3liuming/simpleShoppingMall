@@ -2,6 +2,7 @@ package com.itheima.simpleShoppingMallDemo.Model;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Data
@@ -14,9 +15,9 @@ public class User {
     private String email;
     private String phone;
     private String address;
+    private BigDecimal balance;
     @TableField(fill = FieldFill.INSERT)
     private Timestamp createdAt;
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Timestamp updatedAt;
-
 }
