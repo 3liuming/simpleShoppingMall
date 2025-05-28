@@ -21,6 +21,7 @@ public class CorsConfig {
         config.addAllowedMethod("GET");  // 允许 GET 请求
         config.addAllowedMethod("POST"); // 允许 POST 请求
         config.addAllowedMethod("PUT");//允许 PUT 请求
+        config.addAllowedMethod("PATCH");
         config.addAllowedMethod("OPTIONS");
         source.registerCorsConfiguration("/**", config);  // 全局生效
 

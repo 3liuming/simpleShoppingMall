@@ -4,14 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.itheima.simpleShoppingMallDemo.Mapper.OrderItemMapper;
-import com.itheima.simpleShoppingMallDemo.Mapper.OrderMapper;
-import com.itheima.simpleShoppingMallDemo.Mapper.PaymentMapper;
-import com.itheima.simpleShoppingMallDemo.Mapper.UserMapper;
-import com.itheima.simpleShoppingMallDemo.Model.Order;
-import com.itheima.simpleShoppingMallDemo.Model.OrderItem;
-import com.itheima.simpleShoppingMallDemo.Model.Payment;
-import com.itheima.simpleShoppingMallDemo.Model.User;
+import com.itheima.simpleShoppingMallDemo.Mapper.*;
+import com.itheima.simpleShoppingMallDemo.Model.*;
 import com.itheima.simpleShoppingMallDemo.ModelDto.OrderDto;
 import com.itheima.simpleShoppingMallDemo.Service.OrderService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
@@ -32,6 +26,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     PaymentMapper paymentMapper;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    ProductMapper productMapper;
 
     @Override
     public Result<List<OrderDto>> selAllOrderByUserId(Long userId){
@@ -130,6 +126,25 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             throw new RuntimeException("支付明细插入失败");
         }
 
+        Product product = productMapper.selectOne(
+                new LambdaQueryWrapper<Product>()
+                        .eq(Product::getProductId, orderItem.getProductId())
+                        .last("LIMIT 1"));
+
+        Integer stock = product.getStock() - orderItem.getQuantity();
+
+        if (stock <= 0){
+            throw new RuntimeException("库存不足");
+        }
+        LambdaUpdateWrapper<Product> updateWrapper3 = Wrappers.lambdaUpdate();
+        updateWrapper3
+                .set(Product::getStock, stock)
+                .eq(Product::getProductId, orderItem.getProductId());
+        int resp = productMapper.update(updateWrapper3);
+
+        if (resp <= 0){
+            throw new RuntimeException("库存更新失败");
+        }
         return Result.success(true);
     }
 

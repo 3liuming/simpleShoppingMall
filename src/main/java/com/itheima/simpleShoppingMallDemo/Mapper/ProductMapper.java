@@ -16,6 +16,7 @@ public interface ProductMapper extends BaseMapper<Product> {
     @Select("""
             SELECT
             p.product_id,
+            c.cart_item_id,
             p.name,
             p.description,
             p.price,

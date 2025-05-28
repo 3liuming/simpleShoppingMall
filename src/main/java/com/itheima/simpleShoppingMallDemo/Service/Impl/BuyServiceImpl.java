@@ -1,5 +1,6 @@
 package com.itheima.simpleShoppingMallDemo.Service.Impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -131,6 +132,23 @@ public class BuyServiceImpl extends ServiceImpl<OrderMapper, Order> implements B
         if (success <=0){
             throw new RuntimeException("用户余额更新失败");
         }
+
+        Integer stock = product.getStock() - orderItem.getQuantity();
+
+        if (stock <= 0){
+            throw new RuntimeException("库存不足");
+        }
+
+        LambdaUpdateWrapper<Product> updateWrapper3 = Wrappers.lambdaUpdate();
+        updateWrapper3
+                .set(Product::getStock, stock)
+                .eq(Product::getProductId, orderItem.getProductId());
+        int resp = productMapper.update(updateWrapper3);
+
+        if (resp <= 0){
+            throw new RuntimeException("库存更新失败");
+        }
+
         return Result.success();
     }
 }
