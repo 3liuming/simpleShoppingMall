@@ -26,7 +26,7 @@ public class CartController {
     @PostMapping("/buy")
     public Result<Boolean> createPaymentByCartItemId(HttpServletRequest request,
                                                      @RequestBody BuyCartRequest buyCartRequest){
-        return cartService.createPaymentByCartItemId((Long) request.getAttribute("userId"),buyCartRequest.getCartItemId());
+        return cartService.createPaymentByCartItemId((Long) request.getAttribute("userId"),buyCartRequest.getCartItemIds());
     }
 
 

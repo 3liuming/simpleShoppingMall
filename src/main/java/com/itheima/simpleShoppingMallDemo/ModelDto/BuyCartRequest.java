@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class BuyCartRequest {
-    private List<Long> cartItemId;
+    private List<Long> cartItemIds;
 }

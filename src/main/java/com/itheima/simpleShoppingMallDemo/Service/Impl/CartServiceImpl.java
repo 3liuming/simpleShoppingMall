@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.simpleShoppingMallDemo.Mapper.CartMapper;
-import com.itheima.simpleShoppingMallDemo.Mapper.OrderItemMapper;
-import com.itheima.simpleShoppingMallDemo.Mapper.OrderMapper;
 import com.itheima.simpleShoppingMallDemo.Mapper.ProductMapper;
 import com.itheima.simpleShoppingMallDemo.Model.CartItem;
 import com.itheima.simpleShoppingMallDemo.Model.OrderItem;
@@ -18,6 +16,8 @@ import com.itheima.simpleShoppingMallDemo.Service.CartService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +38,7 @@ public class CartServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
     }
 
     @Override
+    @Transactional
     public Result<Boolean> createPaymentByCartItemId(Long userId,List<Long> cartItemIds){
         List<Long> cartIds = cartItemIds.stream()
                 .filter(cartItemId->cartItemId>0)
@@ -48,12 +49,21 @@ public class CartServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
             OrderItem orderItem = new OrderItem();
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setProductId(cartItem.getProductId());
-            boolean res = buyService.createPaymentByUsernameAndQuantityAndPid(userId,orderItem).getData();
-            if (res){
+            boolean res1 = buyService.createPaymentByUsernameAndQuantityAndPid(userId,orderItem).getData();
+            if (!res1){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return Result.fail("编号为"+id+"的购物车结算失败");
             }
+            int res2 = cartMapper.delete(new LambdaQueryWrapper<CartItem>()
+                    .eq(CartItem::getCartItemId,id)
+                    .eq(CartItem::getUserId,userId));
+            if(res2 <= 0){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return Result.fail("编号为"+id+"的购物车清理失败");
+            }
+
         }
-        return Result.success();
+        return Result.success(true);
     }
 
     @Override

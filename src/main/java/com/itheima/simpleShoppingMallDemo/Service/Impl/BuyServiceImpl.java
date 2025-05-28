@@ -1,6 +1,6 @@
 package com.itheima.simpleShoppingMallDemo.Service.Impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -149,6 +149,6 @@ public class BuyServiceImpl extends ServiceImpl<OrderMapper, Order> implements B
             throw new RuntimeException("库存更新失败");
         }
 
-        return Result.success();
+        return Result.success(true);
     }
 }
