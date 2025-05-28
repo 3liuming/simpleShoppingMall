@@ -30,10 +30,6 @@ public class CartServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
     @Autowired
     CartMapper cartMapper;
     @Autowired
-    OrderItemMapper orderItemMapper;
-    @Autowired
-    OrderMapper orderMapper;
-    @Autowired
     BuyService buyService;
 
     @Override
