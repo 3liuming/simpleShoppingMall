@@ -1,8 +1,6 @@
 package com.itheima.simpleShoppingMallDemo.Controller;
 
-import com.itheima.simpleShoppingMallDemo.Model.Order;
 import com.itheima.simpleShoppingMallDemo.Model.OrderItem;
-import com.itheima.simpleShoppingMallDemo.Model.User;
 import com.itheima.simpleShoppingMallDemo.ModelDto.UserProductDto;
 import com.itheima.simpleShoppingMallDemo.Service.BuyService;
 import com.itheima.simpleShoppingMallDemo.common.Result;

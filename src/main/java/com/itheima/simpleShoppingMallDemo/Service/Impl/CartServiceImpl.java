@@ -5,17 +5,22 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.simpleShoppingMallDemo.Mapper.CartMapper;
+import com.itheima.simpleShoppingMallDemo.Mapper.OrderItemMapper;
+import com.itheima.simpleShoppingMallDemo.Mapper.OrderMapper;
 import com.itheima.simpleShoppingMallDemo.Mapper.ProductMapper;
 import com.itheima.simpleShoppingMallDemo.Model.CartItem;
+import com.itheima.simpleShoppingMallDemo.Model.OrderItem;
 import com.itheima.simpleShoppingMallDemo.ModelDto.CartNumRequest;
 import com.itheima.simpleShoppingMallDemo.ModelDto.CartProductDto;
 import com.itheima.simpleShoppingMallDemo.Model.Product;
+import com.itheima.simpleShoppingMallDemo.Service.BuyService;
 import com.itheima.simpleShoppingMallDemo.Service.CartService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("CartService")
 public class CartServiceImpl extends ServiceImpl<ProductMapper, Product> implements CartService {
@@ -24,6 +29,13 @@ public class CartServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
     ProductMapper productMapper;
     @Autowired
     CartMapper cartMapper;
+    @Autowired
+    OrderItemMapper orderItemMapper;
+    @Autowired
+    OrderMapper orderMapper;
+    @Autowired
+    BuyService buyService;
+
     @Override
     public Result<List<CartProductDto>> selectByUserId(Long userId){
         return Result.success(productMapper.selectByUserId(userId));
@@ -31,6 +43,20 @@ public class CartServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
 
     @Override
     public Result<Boolean> createPaymentByCartItemId(Long userId,List<Long> cartItemIds){
+        List<Long> cartIds = cartItemIds.stream()
+                .filter(cartItemId->cartItemId>0)
+                .collect(Collectors.toList());
+
+        for(long id : cartIds){
+            CartItem cartItem = cartMapper.selectById(id);
+            OrderItem orderItem = new OrderItem();
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setProductId(cartItem.getProductId());
+            boolean res = buyService.createPaymentByUsernameAndQuantityAndPid(userId,orderItem).getData();
+            if (res){
+                return Result.fail("编号为"+id+"的购物车结算失败");
+            }
+        }
         return Result.success();
     }
 
