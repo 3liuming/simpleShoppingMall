@@ -19,10 +19,7 @@ public class CartController {
 
     @GetMapping("/list")
     public Result<List<CartProductDto>> selProductByUserId(HttpServletRequest request){
-        String username = (String)request.getAttribute("username");
         Long userId = (Long) request.getAttribute("userId");
-        System.out.println(userId);
-        System.out.println(username);
-        return Result.success(cartService.selectByUserId(userId).getData());
+        return cartService.selectByUserId(userId);
     }
 }
