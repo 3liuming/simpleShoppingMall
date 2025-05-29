@@ -15,8 +15,8 @@ public class CorsConfig {
 
         // 配置跨域请求的规则
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://127.0.0.1:5500");  // 允许跨域的来源
+        config.setAllowCredentials(false);
+        config.addAllowedOrigin("*");  // 允许跨域的来源
         config.addAllowedHeader("*");  // 允许所有请求头
         config.addAllowedMethod("GET");  // 允许 GET 请求
         config.addAllowedMethod("POST"); // 允许 POST 请求
