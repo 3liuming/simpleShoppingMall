@@ -10,7 +10,7 @@ public interface LoginService extends IService<User> {
 
     Result<Boolean> isUsernameExist(String username);
 
-    Result<Long> verifyUsernameAndPassword(String username, String password);
+    Result<User> verifyUsernameAndPassword(String username, String password);
 
     Result<Boolean> registerUser(User user);
 }

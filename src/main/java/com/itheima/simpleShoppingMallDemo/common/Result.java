@@ -13,6 +13,11 @@ public class Result<T> {
         this.data = data;
     }
 
+    // 成功/失败的判断方法
+    public boolean isSuccess() {
+        return code == 200; // 假设200为成功状态码
+    }
+
     // 成功返回，无数据
     public static <T> Result<T> success() {
         return new Result<>(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);

@@ -15,8 +15,11 @@ public class ProfileController {
 
     @GetMapping("/userinfo")
     public Result<UserDto> selUserByUsername(HttpServletRequest request){
+        System.out.println(request.getAttribute("userId"));
+        System.out.println(request.getAttribute("username"));
+        System.out.println(request.getAttribute("grade"));
         String username = (String)request.getAttribute("username");
-        return Result.success(profileService.selUserByUsername(username).getData());
+        return profileService.selUserByUsername(username);
     }
 
     @PutMapping("/update")

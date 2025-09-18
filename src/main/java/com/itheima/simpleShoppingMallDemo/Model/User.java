@@ -16,6 +16,7 @@ public class User {
     private String phone;
     private String address;
     private BigDecimal balance;
+    private Integer grade;
     @TableField(fill = FieldFill.INSERT)
     private Timestamp createdAt;
     @TableField(fill = FieldFill.INSERT_UPDATE)
