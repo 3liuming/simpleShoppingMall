@@ -39,32 +39,48 @@ public class CartServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
 
     @Override
     @Transactional
-    public Result<Boolean> createPaymentByCartItemId(Long userId,List<Long> cartItemIds){
+    public Result<Boolean> createPaymentByCartItemId(Long userId, List<Long> cartItemIds) {
+        // 过滤有效的购物车项ID
         List<Long> cartIds = cartItemIds.stream()
-                .filter(cartItemId->cartItemId>0)
+                .filter(cartItemId -> cartItemId > 0)
                 .collect(Collectors.toList());
 
-        for(long id : cartIds){
+        // 遍历购物车项
+        for (long id : cartIds) {
             CartItem cartItem = cartMapper.selectById(id);
+
+            if (cartItem == null) {
+                return Result.fail("购物车项不存在，ID：" + id);
+            }
+
             OrderItem orderItem = new OrderItem();
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setProductId(cartItem.getProductId());
-            boolean res1 = buyService.createPaymentByUsernameAndQuantityAndPid(userId,orderItem).getData();
-            if (!res1){
+
+            // 调用创建支付的方法，如果库存不足或者支付失败，回滚事务并返回错误信息
+            Result<Boolean> res1 = buyService.createPaymentByUsernameAndQuantityAndPid(userId, orderItem);
+
+            if (res1 == null || !res1.isSuccess() || !res1.getData()) {
+                // 如果库存不足，或者支付失败，则回滚事务
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return Result.fail("编号为"+id+"的购物车结算失败");
-            }
-            int res2 = cartMapper.delete(new LambdaQueryWrapper<CartItem>()
-                    .eq(CartItem::getCartItemId,id)
-                    .eq(CartItem::getUserId,userId));
-            if(res2 <= 0){
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return Result.fail("编号为"+id+"的购物车清理失败");
+                return Result.fail("编号为" + id + "的购物车结算失败，库存不足或支付失败");
             }
 
+            // 删除购物车中的商品
+            int res2 = cartMapper.delete(new LambdaQueryWrapper<CartItem>()
+                    .eq(CartItem::getCartItemId, id)
+                    .eq(CartItem::getUserId, userId));
+
+            if (res2 <= 0) {
+                // 如果清理购物车失败，回滚事务
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return Result.fail("编号为" + id + "的购物车清理失败");
+            }
         }
+
         return Result.success(true);
     }
+
 
     @Override
     public Result<Boolean> updateCartWithQuantityByNum(CartNumRequest cartNumRequest){
