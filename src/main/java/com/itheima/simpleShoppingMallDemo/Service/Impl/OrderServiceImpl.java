@@ -126,25 +126,25 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             throw new RuntimeException("支付明细插入失败");
         }
 
-        Product product = productMapper.selectOne(
-                new LambdaQueryWrapper<Product>()
-                        .eq(Product::getProductId, orderItem.getProductId())
-                        .last("LIMIT 1"));
-
-        Integer stock = product.getStock() - orderItem.getQuantity();
-
-        if (stock <= 0){
-            throw new RuntimeException("库存不足");
-        }
-        LambdaUpdateWrapper<Product> updateWrapper3 = Wrappers.lambdaUpdate();
-        updateWrapper3
-                .set(Product::getStock, stock)
-                .eq(Product::getProductId, orderItem.getProductId());
-        int resp = productMapper.update(updateWrapper3);
-
-        if (resp <= 0){
-            throw new RuntimeException("库存更新失败");
-        }
+//        Product product = productMapper.selectOne(
+//                new LambdaQueryWrapper<Product>()
+//                        .eq(Product::getProductId, orderItem.getProductId())
+//                        .last("LIMIT 1"));
+//
+//        Integer stock = product.getStock() - orderItem.getQuantity();
+//
+//        if (stock <= 0){
+//            throw new RuntimeException("库存不足");
+//        }
+//        LambdaUpdateWrapper<Product> updateWrapper3 = Wrappers.lambdaUpdate();
+//        updateWrapper3
+//                .set(Product::getStock, stock)
+//                .eq(Product::getProductId, orderItem.getProductId());
+//        int resp = productMapper.update(updateWrapper3);
+//
+//        if (resp <= 0){
+//            throw new RuntimeException("库存更新失败");
+//        }
         return Result.success(true);
     }
 
