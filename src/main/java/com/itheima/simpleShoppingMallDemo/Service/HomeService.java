@@ -9,12 +9,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public interface HomeService extends IService<Product> {
-
     Result<List<Category>> selCategories();
-    Result<IPage<Product>> selProducts(Integer page, Integer perpage);
-    Result<IPage<Product>> selProductsByCategoryId(Integer page, Integer perPage,Long categoryId);
 
-    Result<Boolean> addCartWithPidAndUid(Long userId,Long productId);
+    Result<IPage<Product>> selProducts(Integer page, Integer perPage, String sort);
+
+    Result<IPage<Product>> selProductsByCategoryId(Integer page, Integer perPage, Long categoryId, String sort);
+
+    Result<IPage<Product>> searchProducts(Integer page, Integer perPage, String keyword, String sort);
+
+    Result<Boolean> addCartWithPidAndUid(Long userId, Long productId);
 }
+

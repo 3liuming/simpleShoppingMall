@@ -2,6 +2,7 @@ package com.itheima.simpleShoppingMallDemo.Service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.simpleShoppingMallDemo.Mapper.*;
@@ -152,6 +153,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Transactional
     public Result<Boolean> deleteOrderByOrderId(Long orderId){
         LambdaUpdateWrapper<Order> updateWrapper1 = Wrappers.lambdaUpdate();
+        OrderItem orderItem = orderItemMapper.selectById(orderId);//通过orderid获取订单项id
+        Product product = productMapper.selectById(orderItem.getProductId());//通过商品id获取商品
+        Integer stock  = product.getStock()+orderItem.getQuantity();//确定更新后的数量
+
         updateWrapper1
                 .set(Order::getHidden,1)
                 .eq(Order::getOrderId,orderId);
@@ -168,6 +173,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         if (res2 <=0){
             throw new RuntimeException("orderItem表删除失败");
+        }
+
+        UpdateWrapper<Product> updateWrapper3 = new UpdateWrapper<>();
+        updateWrapper3.eq("product_id", orderItem.getProductId());//设置要更新的主键
+        product.setStock(stock);
+        int res3 = productMapper.update(product,updateWrapper3);//更新库存
+        if (res3 <=0){
+            throw new RuntimeException("库存更新失败");
         }
         return Result.success(true);
     }

@@ -19,26 +19,37 @@ public class HomeController {
 
     @GetMapping("/catlist")
     public Result<List<Category>> getList(){
-
         return Result.success(homeService.selCategories().getData());
     }
+
     @GetMapping("/prolist")
     public Result<IPage<Product>> getList(@RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
-                          @RequestParam(name = "perPage", required = false, defaultValue = "10") Integer perPage){
-        return Result.success(homeService.selProducts(page,perPage).getData());
+                                          @RequestParam(name = "perPage", required = false, defaultValue = "10") Integer perPage,
+                                          @RequestParam(name = "sort", required = false, defaultValue = "default") String sort){
+        return Result.success(homeService.selProducts(page, perPage, sort).getData());
     }
 
     @GetMapping("/bycategory")
     public Result<IPage<Product>> getProductByCategoyrId(@RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+                                                         @RequestParam(name = "perPage", required = false, defaultValue = "10") Integer perPage,
+                                                         @RequestParam(name = "categoryId", required = false, defaultValue = "1") Long categoryId,
+                                                         @RequestParam(name = "sort", required = false, defaultValue = "default") String sort){
+        return Result.success(homeService.selProductsByCategoryId(page, perPage, categoryId, sort).getData());
+    }
+
+    @GetMapping("/search")
+    public Result<IPage<Product>> searchProducts(@RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
                                                  @RequestParam(name = "perPage", required = false, defaultValue = "10") Integer perPage,
-                                                 @RequestParam(name = "categoryId", required = false, defaultValue = "1") Long categoryId){
-        return Result.success(homeService.selProductsByCategoryId(page,perPage,categoryId).getData());
+                                                 @RequestParam(name = "keyword", required = true) String keyword,
+                                                 @RequestParam(name = "sort", required = false, defaultValue = "default") String sort){
+        return Result.success(homeService.searchProducts(page, perPage, keyword, sort).getData());
     }
 
     @PostMapping("/addcart")
-    public Result<Boolean> addCartWithPidAndUid(@RequestParam("productId") Long productId,HttpServletRequest request){
+    public Result<Boolean> addCartWithPidAndUid(@RequestParam("productId") Long productId, HttpServletRequest request){
         Long userId = (Long) request.getAttribute("userId");
         System.out.println(productId);
-        return homeService.addCartWithPidAndUid(userId,productId);
+        return homeService.addCartWithPidAndUid(userId, productId);
     }
 }
+

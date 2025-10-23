@@ -29,7 +29,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/login/**",              // 登录、注册 API
                         "/css/**", "/js/**",     // 根据你的静态目录再加
                         "/images/**",
-                        "/favicon.ico"
+                        "/favicon.ico",
+                        "/home/**"
                 );
     }
 }

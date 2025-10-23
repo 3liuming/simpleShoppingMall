@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 public class UserDto {
     private Long userId;
     private String nickname;
-//    private String username;
+    private String username;
     private String email;
     private String phone;
     private String address;
