@@ -29,6 +29,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     UserMapper userMapper;
     @Autowired
     ProductMapper productMapper;
+    @Autowired
+    BalanceUsageRecordMapper balanceUsageRecordMapper;
 
     @Override
     public Result<List<OrderDto>> selAllOrderByUserId(Long userId){
@@ -70,6 +72,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     @Transactional
     public Result<Boolean> createPaymentByUserIdAndOrderId(Long orderId){
+        BalanceUsageRecord balanceUsageRecord = new BalanceUsageRecord();
         Order order = orderMapper.selectById(orderId);
         if (order == null) {
             throw new RuntimeException("订单不存在");
@@ -104,6 +107,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         payment.setAmount(order.getTotalPrice());
 
 
+        balanceUsageRecord.setBalanceBefore(user.getBalance());//余额使用记录获取支付前的余额
+        balanceUsageRecord.setBalanceUsed(order.getTotalPrice());//余额使用记录获取支付金额
+        balanceUsageRecord.setBalanceAfter(endBalance);//余额使用记录获取支付后的金额
+
         LambdaUpdateWrapper<User> updateWrapper1 = Wrappers.lambdaUpdate();
         updateWrapper1
                 .set(User::getBalance, endBalance)
@@ -118,6 +125,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .set(Order::getStatus, 1L)
                 .eq(Order::getOrderId, orderId);  // 指定哪个订单
         int resO = orderMapper.update(updateWrapper2);
+
         if (resO <=0){
             throw new RuntimeException("订单状态更新失败");
         }
@@ -127,25 +135,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             throw new RuntimeException("支付明细插入失败");
         }
 
-//        Product product = productMapper.selectOne(
-//                new LambdaQueryWrapper<Product>()
-//                        .eq(Product::getProductId, orderItem.getProductId())
-//                        .last("LIMIT 1"));
-//
-//        Integer stock = product.getStock() - orderItem.getQuantity();
-//
-//        if (stock <= 0){
-//            throw new RuntimeException("库存不足");
-//        }
-//        LambdaUpdateWrapper<Product> updateWrapper3 = Wrappers.lambdaUpdate();
-//        updateWrapper3
-//                .set(Product::getStock, stock)
-//                .eq(Product::getProductId, orderItem.getProductId());
-//        int resp = productMapper.update(updateWrapper3);
-//
-//        if (resp <= 0){
-//            throw new RuntimeException("库存更新失败");
-//        }
+        balanceUsageRecord.setUserId(payment.getUserId());//获取用户id
+        balanceUsageRecord.setPaymentId(payment.getPaymentId());//获取payment插入后的主键
+        balanceUsageRecord.setTransactionType("消费");//记录消费或者退款
+
+        int resR = balanceUsageRecordMapper.insert(balanceUsageRecord);
+
+        if (resR <=0){
+            throw new RuntimeException("余额使用记录插入失败");
+        }
+
         return Result.success(true);
     }
 

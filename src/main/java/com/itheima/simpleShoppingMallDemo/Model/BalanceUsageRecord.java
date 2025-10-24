@@ -9,8 +9,8 @@ import java.sql.Timestamp;
 @Data
 @TableName("balance_usage_record")
 public class BalanceUsageRecord {
-    @TableId(value = "record_id", type = IdType.AUTO)
-    private Long recordId;
+    @TableId(value = "usage_id", type = IdType.AUTO)
+    private Long usageId;
     private Long paymentId;
     private Long userId;
     private BigDecimal balanceBefore;
