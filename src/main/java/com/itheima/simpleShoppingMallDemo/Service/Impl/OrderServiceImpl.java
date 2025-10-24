@@ -31,6 +31,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     ProductMapper productMapper;
     @Autowired
     BalanceUsageRecordMapper balanceUsageRecordMapper;
+    @Autowired
+    private ShipmentMapper shipmentMapper;
 
     @Override
     public Result<List<OrderDto>> selAllOrderByUserId(Long userId){
@@ -71,77 +73,101 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     @Transactional
-    public Result<Boolean> createPaymentByUserIdAndOrderId(Long orderId){
+    public Result<Boolean> createPaymentByUserIdAndOrderId(Long orderId) {
         BalanceUsageRecord balanceUsageRecord = new BalanceUsageRecord();
+
+        // 1. 查询订单
         Order order = orderMapper.selectById(orderId);
         if (order == null) {
             throw new RuntimeException("订单不存在");
         }
+
+        // 2. 检查订单状态
         if (order.getStatus() != null && order.getStatus().equals(1L)) {
             throw new RuntimeException("该订单已支付，不能重复支付");
         }
+
+        // 3. 查询订单明细（这里只查一个用于验证，实际上可能有多个）
         OrderItem orderItem = orderItemMapper.selectOne(
                 new LambdaQueryWrapper<OrderItem>()
                         .eq(OrderItem::getOrderId, orderId)
                         .last("LIMIT 1")
         );
-        User user = userMapper.selectById(order.getUserId());
-        Payment payment = new Payment();
-        if(orderItem == null){
+
+        if (orderItem == null) {
             throw new RuntimeException("订单明细不存在");
         }
 
+        // 4. 查询用户信息
+        User user = userMapper.selectById(order.getUserId());
+
+        // 5. 验证余额
         if (user.getBalance() == null || order.getTotalPrice() == null
                 || user.getBalance().compareTo(BigDecimal.ZERO) <= 0
                 || order.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0
                 || user.getBalance().compareTo(order.getTotalPrice()) < 0) {
-
             throw new RuntimeException("余额不足，或值为空/无效");
         }
 
+        // 6. 计算支付后余额
         BigDecimal endBalance = user.getBalance().subtract(order.getTotalPrice());
-        user.setBalance(endBalance);
+
+        // 7. 创建支付记录
+        Payment payment = new Payment();
         payment.setStatus(1L);
         payment.setUserId(order.getUserId());
         payment.setOrderId(orderId);
         payment.setAmount(order.getTotalPrice());
 
-
-        balanceUsageRecord.setBalanceBefore(user.getBalance());//余额使用记录获取支付前的余额
-        balanceUsageRecord.setBalanceUsed(order.getTotalPrice());//余额使用记录获取支付金额
-        balanceUsageRecord.setBalanceAfter(endBalance);//余额使用记录获取支付后的金额
-
-        LambdaUpdateWrapper<User> updateWrapper1 = Wrappers.lambdaUpdate();
-        updateWrapper1
-                .set(User::getBalance, endBalance)
-                .eq(User::getUserId,order.getUserId());  // 指定哪个用户
-        int resU = userMapper.update(updateWrapper1);
-        if (resU <=0){
-            throw new RuntimeException("用户余额更新失败");
-        }
-
-        LambdaUpdateWrapper<Order> updateWrapper2 = Wrappers.lambdaUpdate();
-        updateWrapper2
-                .set(Order::getStatus, 1L)
-                .eq(Order::getOrderId, orderId);  // 指定哪个订单
-        int resO = orderMapper.update(updateWrapper2);
-
-        if (resO <=0){
-            throw new RuntimeException("订单状态更新失败");
-        }
-
         int resP = paymentMapper.insert(payment);
-        if (resP <=0){
+        if (resP <= 0) {
             throw new RuntimeException("支付明细插入失败");
         }
 
-        balanceUsageRecord.setUserId(payment.getUserId());//获取用户id
-        balanceUsageRecord.setPaymentId(payment.getPaymentId());//获取payment插入后的主键
-        balanceUsageRecord.setTransactionType("消费");//记录消费或者退款
+        // ✨✨✨ 8. 更新发货表的 paymentId（新增部分）✨✨✨
+        LambdaUpdateWrapper<Shipment> shipmentUpdateWrapper = Wrappers.lambdaUpdate();
+        shipmentUpdateWrapper
+                .set(Shipment::getPaymentId, payment.getPaymentId())
+                .eq(Shipment::getOrderId, orderId);
+
+        int shipmentUpdateResult = shipmentMapper.update(shipmentUpdateWrapper);
+        if (shipmentUpdateResult <= 0) {
+            throw new RuntimeException("发货表 paymentId 更新失败");
+        }
+        // ✨✨✨ 更新发货表结束 ✨✨✨
+
+        // 9. 更新用户余额
+        LambdaUpdateWrapper<User> updateWrapper1 = Wrappers.lambdaUpdate();
+        updateWrapper1
+                .set(User::getBalance, endBalance)
+                .eq(User::getUserId, order.getUserId());
+
+        int resU = userMapper.update(updateWrapper1);
+        if (resU <= 0) {
+            throw new RuntimeException("用户余额更新失败");
+        }
+
+        // 10. 更新订单状态
+        LambdaUpdateWrapper<Order> updateWrapper2 = Wrappers.lambdaUpdate();
+        updateWrapper2
+                .set(Order::getStatus, 1L)
+                .eq(Order::getOrderId, orderId);
+
+        int resO = orderMapper.update(updateWrapper2);
+        if (resO <= 0) {
+            throw new RuntimeException("订单状态更新失败");
+        }
+
+        // 11. 创建余额使用记录
+        balanceUsageRecord.setUserId(payment.getUserId());
+        balanceUsageRecord.setPaymentId(payment.getPaymentId());
+        balanceUsageRecord.setBalanceBefore(user.getBalance());
+        balanceUsageRecord.setBalanceUsed(order.getTotalPrice());
+        balanceUsageRecord.setBalanceAfter(endBalance);
+        balanceUsageRecord.setTransactionType("消费");
 
         int resR = balanceUsageRecordMapper.insert(balanceUsageRecord);
-
-        if (resR <=0){
+        if (resR <= 0) {
             throw new RuntimeException("余额使用记录插入失败");
         }
 

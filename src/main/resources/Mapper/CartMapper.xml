@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.simpleShoppingMallDemo.Mapper.CartItemMapper">
+    <select id="selByUserIdAndCartItemId" resultType="com.itheima.simpleShoppingMallDemo.Model.CartItem">
+        SELECT * FROM cart_items
+        WHERE user_id = #{userId} AND cart_item_id = #{cartItemId} AND hidden = 0
+    </select>
+</mapper>

@@ -21,8 +21,8 @@ public class JwtTokenUtil {
     /** 解码后的 SecretKey，用于签名与验证 */
     private final SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(SECRET_BASE64));
 
-    /** Token 过期时间（秒），这里设置为 1 小时 */
-    private static final long EXPIRATION = 3_600L;
+    /** Token 过期时间（秒），这里设置为 10 小时 */
+    private static final long EXPIRATION = 3_6000L;
 
     /**
      * 生成 JWT Token

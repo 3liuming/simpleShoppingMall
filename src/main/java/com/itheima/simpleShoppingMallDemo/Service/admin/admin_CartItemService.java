@@ -2,7 +2,7 @@ package com.itheima.simpleShoppingMallDemo.Service.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.itheima.simpleShoppingMallDemo.Mapper.CartMapper;
+import com.itheima.simpleShoppingMallDemo.Mapper.CartItemMapper;
 import com.itheima.simpleShoppingMallDemo.Model.CartItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class admin_CartItemService {
 
     @Autowired
-    private CartMapper mapper;
+    private CartItemMapper mapper;
 
     public IPage<CartItem> list(long page, long size) {
         return mapper.selectPage(new Page<>(page, size), null);

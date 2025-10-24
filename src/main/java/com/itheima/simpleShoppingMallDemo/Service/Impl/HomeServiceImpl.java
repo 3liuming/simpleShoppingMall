@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.itheima.simpleShoppingMallDemo.Mapper.CartMapper;
+import com.itheima.simpleShoppingMallDemo.Mapper.CartItemMapper;
 import com.itheima.simpleShoppingMallDemo.Mapper.CategoryMapper;
 import com.itheima.simpleShoppingMallDemo.Mapper.ProductMapper;
 import com.itheima.simpleShoppingMallDemo.Model.CartItem;
@@ -27,7 +27,7 @@ public class HomeServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
     CategoryMapper categoryMapper;
 
     @Autowired
-    CartMapper cartMapper;
+    CartItemMapper cartItemMapper;
 
     @Override
     public Result<List<Category>> selCategories(){
@@ -72,13 +72,13 @@ public class HomeServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
         QueryWrapper<CartItem> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", userId).eq("product_id", productId);
         Product product = productMapper.selectById(productId);
-        CartItem existingItem = cartMapper.selectOne(queryWrapper);
+        CartItem existingItem = cartItemMapper.selectOne(queryWrapper);
 
 
         if (existingItem != null && product.getStock() != 0) {
             // 已存在，则数量 +1
             existingItem.setQuantity(existingItem.getQuantity() + 1);
-            int updateRows = cartMapper.updateById(existingItem);
+            int updateRows = cartItemMapper.updateById(existingItem);
             if (updateRows > 0) {
                 return Result.success(true);
             } else {
@@ -91,7 +91,7 @@ public class HomeServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
             cartItem.setUserId(userId);
             cartItem.setProductId(productId);
             cartItem.setQuantity(1);
-            int insertRows = cartMapper.insert(cartItem);
+            int insertRows = cartItemMapper.insert(cartItem);
             if (insertRows > 0) {
                 return Result.success(true);
             } else {

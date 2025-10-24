@@ -4,10 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.itheima.simpleShoppingMallDemo.Mapper.CartMapper;
+import com.itheima.simpleShoppingMallDemo.Mapper.CartItemMapper;
 import com.itheima.simpleShoppingMallDemo.Mapper.ProductMapper;
 import com.itheima.simpleShoppingMallDemo.Model.CartItem;
-import com.itheima.simpleShoppingMallDemo.Model.OrderItem;
 import com.itheima.simpleShoppingMallDemo.ModelDto.CartNumRequest;
 import com.itheima.simpleShoppingMallDemo.ModelDto.CartProductDto;
 import com.itheima.simpleShoppingMallDemo.Model.Product;
@@ -17,10 +16,8 @@ import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service("CartService")
 public class CartServiceImpl extends ServiceImpl<ProductMapper, Product> implements CartService {
@@ -28,7 +25,7 @@ public class CartServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
     @Autowired
     ProductMapper productMapper;
     @Autowired
-    CartMapper cartMapper;
+    CartItemMapper cartItemMapper;
     @Autowired
     BuyService buyService;
 
@@ -40,43 +37,43 @@ public class CartServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
     @Override
     @Transactional
     public Result<Boolean> createPaymentByCartItemId(Long userId, List<Long> cartItemIds) {
-        // 过滤有效的购物车项ID
-        List<Long> cartIds = cartItemIds.stream()
-                .filter(cartItemId -> cartItemId > 0)
-                .collect(Collectors.toList());
-
-        // 遍历购物车项
-        for (long id : cartIds) {
-            CartItem cartItem = cartMapper.selectById(id);
-
-            if (cartItem == null) {
-                return Result.fail("购物车项不存在，ID：" + id);
-            }
-
-            OrderItem orderItem = new OrderItem();
-            orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setProductId(cartItem.getProductId());
-
-            // 调用创建支付的方法，如果库存不足或者支付失败，回滚事务并返回错误信息
-            Result<Boolean> res1 = buyService.createPaymentByUsernameAndQuantityAndPid(userId, orderItem);
-
-            if (res1 == null || !res1.isSuccess() || !res1.getData()) {
-                // 如果库存不足，或者支付失败，则回滚事务
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return Result.fail("编号为" + id + "的购物车结算失败，库存不足或支付失败");
-            }
-
-            // 删除购物车中的商品
-            int res2 = cartMapper.delete(new LambdaQueryWrapper<CartItem>()
-                    .eq(CartItem::getCartItemId, id)
-                    .eq(CartItem::getUserId, userId));
-
-            if (res2 <= 0) {
-                // 如果清理购物车失败，回滚事务
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return Result.fail("编号为" + id + "的购物车清理失败");
-            }
-        }
+//        // 过滤有效的购物车项ID
+//        List<Long> cartIds = cartItemIds.stream()
+//                .filter(cartItemId -> cartItemId > 0)
+//                .collect(Collectors.toList());
+//
+//        // 遍历购物车项
+//        for (long id : cartIds) {
+//            CartItem cartItem = cartItemMapper.selectById(id);
+//
+//            if (cartItem == null) {
+//                return Result.fail("购物车项不存在，ID：" + id);
+//            }
+//
+//            OrderItem orderItem = new OrderItem();
+//            orderItem.setQuantity(cartItem.getQuantity());
+//            orderItem.setProductId(cartItem.getProductId());
+//
+//            // 调用创建支付的方法，如果库存不足或者支付失败，回滚事务并返回错误信息
+//            Result<Boolean> res1 = buyService.createPaymentByUsernameAndQuantityAndPid(userId, orderItem);
+//
+//            if (res1 == null || !res1.isSuccess() || !res1.getData()) {
+//                // 如果库存不足，或者支付失败，则回滚事务
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//                return Result.fail("编号为" + id + "的购物车结算失败，库存不足或支付失败");
+//            }
+//
+//            // 删除购物车中的商品
+//            int res2 = cartItemMapper.delete(new LambdaQueryWrapper<CartItem>()
+//                    .eq(CartItem::getCartItemId, id)
+//                    .eq(CartItem::getUserId, userId));
+//
+//            if (res2 <= 0) {
+//                // 如果清理购物车失败，回滚事务
+//                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//                return Result.fail("编号为" + id + "的购物车清理失败");
+//            }
+//        }
 
         return Result.success(true);
     }
@@ -85,19 +82,19 @@ public class CartServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
     @Override
     public Result<Boolean> updateCartWithQuantityByNum(CartNumRequest cartNumRequest){
         if (cartNumRequest != null && cartNumRequest.getQuantity() !=null && cartNumRequest.getQuantity() >0){
-            Integer resc = cartMapper.update(new LambdaUpdateWrapper<CartItem>()
+            Integer resc = cartItemMapper.update(new LambdaUpdateWrapper<CartItem>()
                 .set(CartItem::getQuantity,cartNumRequest.getQuantity())
                 .eq(CartItem::getCartItemId,cartNumRequest.getCartItemId()));
             if(resc <= 0){
                 return Result.fail("购物车数量更新失败");
             }
         }else if (cartNumRequest != null && (cartNumRequest.getDelta() == 1 || cartNumRequest.getDelta() == -1)){
-            CartItem cartItem = cartMapper.selectOne(new QueryWrapper<CartItem>()
+            CartItem cartItem = cartItemMapper.selectOne(new QueryWrapper<CartItem>()
                     .select("quantity")
                     .eq("cart_item_id", cartNumRequest.getCartItemId()));
             if(cartItem.getQuantity()>0){
                 Integer quantity = cartItem.getQuantity()+cartNumRequest.getDelta();
-                Integer resq = cartMapper.update(new LambdaUpdateWrapper<CartItem>()
+                Integer resq = cartItemMapper.update(new LambdaUpdateWrapper<CartItem>()
                         .set(CartItem::getQuantity,quantity)
                         .eq(CartItem::getCartItemId,cartNumRequest.getCartItemId()));
                 if (resq <= 0 ){
@@ -112,7 +109,7 @@ public class CartServiceImpl extends ServiceImpl<ProductMapper, Product> impleme
     @Override
     public Result<Boolean> deleteCartByCartItemId(Long userId,Long cartItemId){
 
-        int resc = cartMapper.delete(new LambdaQueryWrapper<CartItem>()
+        int resc = cartItemMapper.delete(new LambdaQueryWrapper<CartItem>()
                 .eq(CartItem::getCartItemId, cartItemId)
                 .eq(CartItem::getUserId, userId)
         );

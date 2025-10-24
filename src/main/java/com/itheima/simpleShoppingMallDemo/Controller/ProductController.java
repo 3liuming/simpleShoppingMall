@@ -26,12 +26,14 @@ public class ProductController {
     @PostMapping("/create")
     public Result<Boolean> createOrderByUsernameAndQuantityAndPid(@RequestBody OrderItem orderItem,
                                                                   HttpServletRequest request){
-        return buyService.createOrderByUsernameAndQuantityAndPid((Long)request.getAttribute("userId"),orderItem);
+//        return buyService.createOrderByUsernameAndQuantityAndPid((Long)request.getAttribute("userId"),orderItem);
+        return Result.success();
     }
 
     @PostMapping("/nowbuy")
     public Result<Boolean> CreatePaymentByUserNameAndQuantityAndPid(@RequestBody OrderItem orderItem,
                                                                     HttpServletRequest request){
-        return buyService.createPaymentByUsernameAndQuantityAndPid((Long)request.getAttribute("userId"),orderItem);
+//        return buyService.createPaymentByUsernameAndQuantityAndPid((Long)request.getAttribute("userId"),orderItem);
+        return Result.success();
     }
 }

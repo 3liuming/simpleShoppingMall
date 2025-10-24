@@ -12,6 +12,7 @@ public class Order {
     @TableId(value = "order_id", type = IdType.AUTO)
     private Long orderId;
     private Long userId;
+    private Long addressId;
     private BigDecimal totalPrice;
     private Long status;
     @TableField(fill = FieldFill.INSERT)
