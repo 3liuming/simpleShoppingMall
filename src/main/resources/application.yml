@@ -25,3 +25,7 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 #debug: true
+
+
+file:
+  upload-path: E:/htmlplace/simpleShoppingMallUI/img

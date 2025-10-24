@@ -27,10 +27,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         "/login.html",           // 登录页面
                         "/login/**",              // 登录、注册 API
-                        "/css/**", "/js/**",     // 根据你的静态目录再加
+                        "/css/**", "/js/**",     // 静态目录
                         "/images/**",
                         "/favicon.ico",
-                        "/home/**"
+                        "/home/catlist",
+                        "/home/prolist",
+                        "/home/bycategory"
                 );
     }
 }
