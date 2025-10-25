@@ -8,11 +8,12 @@ import java.time.LocalDateTime;
 @Data
 @TableName("shipments")
 public class Shipment {
-    @TableId(value = "shipping_id", type = IdType.AUTO)
+    @TableId(value = "shipment_id", type = IdType.AUTO)
     private Long shippingId;
     private Long orderId;           // 订单ID
     private Long orderItemId;       // 订单明细ID
     private Long productId;         // 商品ID
+    private Long userId;            //用户id
     private Integer quantity;       // 发货数量
     private Long addressId;         // 收货地址ID
     private Long paymentId;         // 支付ID（支付后补全）

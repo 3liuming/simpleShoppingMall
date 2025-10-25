@@ -137,6 +137,7 @@ public class BuyServiceImpl extends ServiceImpl<OrderMapper, Order> implements B
             shipment.setOrderId(order.getOrderId());
             shipment.setOrderItemId(orderItem.getOrderItemId());
             shipment.setProductId(itemDto.getProductId());
+            shipment.setUserId(userId);
             shipment.setQuantity(itemDto.getQuantity());
             shipment.setAddressId(cartBuyDto.getAddressId());
             shipment.setShipmentStatus(0L); // 待发货
