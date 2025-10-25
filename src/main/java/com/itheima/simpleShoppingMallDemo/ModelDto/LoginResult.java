@@ -6,4 +6,5 @@ import lombok.Data;
 public class LoginResult {
     private String token;
     private Integer grade;
+    private String userName;
 }

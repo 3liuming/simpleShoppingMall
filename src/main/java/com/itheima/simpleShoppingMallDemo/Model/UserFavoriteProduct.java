@@ -6,4 +6,5 @@ import lombok.Data;
 @Data
 @TableName("user_favorite_product")
 public class UserFavoriteProduct {
+
 }

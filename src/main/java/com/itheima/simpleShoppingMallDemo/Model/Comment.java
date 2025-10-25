@@ -12,6 +12,8 @@ public class Comment {
     private Long commentId;
     private Long userId;
     private Long productId;
+    private String content;
+    private String commentImageUrl;
     @TableField(fill = FieldFill.INSERT)
     private Timestamp createdAt;
     @TableField(fill = FieldFill.INSERT_UPDATE)

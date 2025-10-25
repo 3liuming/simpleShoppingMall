@@ -61,8 +61,8 @@ public final class UploadImage {
             Path file = dir.resolve(fileName);
             Files.write(file, bytes);
 
-            // 返回图片的绝对路径
-            return uploadPath + url + fileName;
+            // 返回图片的相对路径
+            return "./img"+ url + fileName;
         } catch (Exception e) {
             e.printStackTrace();
             return "保存失败：" + e.getMessage();
