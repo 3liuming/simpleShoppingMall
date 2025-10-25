@@ -7,4 +7,5 @@ public class LoginResult {
     private String token;
     private Integer grade;
     private String userName;
+    private Long userId;
 }

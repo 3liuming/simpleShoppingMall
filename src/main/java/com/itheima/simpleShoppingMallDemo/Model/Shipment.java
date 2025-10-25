@@ -25,4 +25,5 @@ public class Shipment {
     @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
     private Timestamp updatedAt;
     @TableLogic@TableField("hidden")
-    private Integer hidden;}
+    private Integer hidden;
+}

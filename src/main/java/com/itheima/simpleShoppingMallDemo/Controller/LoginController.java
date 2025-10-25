@@ -28,6 +28,7 @@ public class LoginController {
             result.setToken(jwtTokenUtil.generateToken(resuser.getUsername(), resuser.getUserId(), resuser.getGrade()));
             result.setGrade(resuser.getGrade());
             result.setUserName(resuser.getUsername());
+            result.setUserId(resuser.getUserId());
             return Result.success(result);
         }else {
             return Result.fail("登录失败");
