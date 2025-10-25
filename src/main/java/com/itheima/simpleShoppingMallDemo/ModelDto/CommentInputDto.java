@@ -3,7 +3,7 @@ package com.itheima.simpleShoppingMallDemo.ModelDto;
 import lombok.Data;
 
 @Data
-public class CommentDTO {
+public class CommentInputDto {
 
     private Long productId;
 

@@ -1,10 +1,9 @@
 package com.itheima.simpleShoppingMallDemo.Controller;
 
-import com.itheima.simpleShoppingMallDemo.Mapper.ProductMapper;
 import com.itheima.simpleShoppingMallDemo.Model.Comment;
 import com.itheima.simpleShoppingMallDemo.Model.OrderItem;
 import com.itheima.simpleShoppingMallDemo.Model.Product;
-import com.itheima.simpleShoppingMallDemo.ModelDto.CommentDTO;
+import com.itheima.simpleShoppingMallDemo.ModelDto.CommentInputDto;
 import com.itheima.simpleShoppingMallDemo.ModelVO.CommentVO;
 import com.itheima.simpleShoppingMallDemo.Service.BuyService;
 import com.itheima.simpleShoppingMallDemo.Service.CommentService;
@@ -40,7 +39,7 @@ public class ProductController {
      */
     @PostMapping
     public Map<String, Object> addComment(
-            @RequestBody CommentDTO commentDTO,
+            @RequestBody CommentInputDto commentInputDto,
             HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
 
@@ -53,7 +52,7 @@ public class ProductController {
                 return result;
             }
 
-            Comment comment = commentService.addComment(userId, commentDTO);
+            Comment comment = commentService.addComment(userId, commentInputDto);
 
             result.put("code", 200);
             result.put("message", "评论成功");

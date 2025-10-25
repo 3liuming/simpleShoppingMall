@@ -2,7 +2,7 @@ package com.itheima.simpleShoppingMallDemo.Service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.itheima.simpleShoppingMallDemo.Model.Comment;
-import com.itheima.simpleShoppingMallDemo.ModelDto.CommentDTO;
+import com.itheima.simpleShoppingMallDemo.ModelDto.CommentInputDto;
 import com.itheima.simpleShoppingMallDemo.ModelVO.CommentVO;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public interface CommentService extends IService<Comment> {
     /**
      * 添加评论
      */
-    Comment addComment(Long userId, CommentDTO commentDTO);
+    Comment addComment(Long userId, CommentInputDto commentInputDto);
 
     /**
      * 删除评论（仅本人可删除）

@@ -3,7 +3,7 @@ package com.itheima.simpleShoppingMallDemo.Service.Impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.simpleShoppingMallDemo.Mapper.CommentMapper;
 import com.itheima.simpleShoppingMallDemo.Model.Comment;
-import com.itheima.simpleShoppingMallDemo.ModelDto.CommentDTO;
+import com.itheima.simpleShoppingMallDemo.ModelDto.CommentInputDto;
 import com.itheima.simpleShoppingMallDemo.ModelVO.CommentVO;
 import com.itheima.simpleShoppingMallDemo.Service.CommentService;
 import com.itheima.simpleShoppingMallDemo.common.UploadImage;
@@ -21,17 +21,17 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Comment addComment(Long userId, CommentDTO commentDTO) {
+    public Comment addComment(Long userId, CommentInputDto commentInputDto) {
         Comment comment = new Comment();
         comment.setUserId(userId);
-        comment.setProductId(commentDTO.getProductId());
-        comment.setContent(commentDTO.getContent());
+        comment.setProductId(commentInputDto.getProductId());
+        comment.setContent(commentInputDto.getContent());
 
         // 如果有图片，保存图片
-        if (commentDTO.getCommentImage() != null &&
-                !commentDTO.getCommentImage().isEmpty()) {
+        if (commentInputDto.getCommentImage() != null &&
+                !commentInputDto.getCommentImage().isEmpty()) {
             String imagePath = UploadImage.uploadPostImage(
-                    commentDTO.getCommentImage(),
+                    commentInputDto.getCommentImage(),
                     "/comments/"
             );
 
