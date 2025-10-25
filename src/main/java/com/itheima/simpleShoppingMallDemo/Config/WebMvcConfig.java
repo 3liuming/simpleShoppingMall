@@ -33,8 +33,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/home/catlist",
                         "/home/prolist",
                         "/home/bycategory",
-                        "product/getComments",
-                        "product/show"
+                        "/product/getComments",
+                        "/product/show"
                 );
     }
 }
