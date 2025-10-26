@@ -7,6 +7,8 @@ import com.itheima.simpleShoppingMallDemo.Model.UserFavoriteProduct;
 import com.itheima.simpleShoppingMallDemo.Service.UserFavoriteProductService;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -15,16 +17,23 @@ public class UserFavoriteProductServiceImpl extends ServiceImpl<UserFavoriteProd
 
     @Override
     public boolean addFavorite(Long userId, Long productId) {
-        // 检查是否已经收藏
-        LambdaQueryWrapper<UserFavoriteProduct> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserFavoriteProduct::getUserId, userId)
-                .eq(UserFavoriteProduct::getProductId, productId);
+        // 使用自定义方法查询,包含逻辑删除的记录
+        UserFavoriteProduct existing = this.baseMapper.selectIncludeDeleted(userId, productId);
 
-        UserFavoriteProduct existing = this.getOne(wrapper);
         if (existing != null) {
-            throw new RuntimeException("该商品已收藏");
+            if (existing.getHidden() == 1) {
+                // 逻辑删除的记录,恢复它
+                // 方案1: 使用自定义 SQL 更新
+                int result = this.baseMapper.restoreFavorite(existing.getFavoriteId());
+                return result > 0;
+
+            } else {
+                // 正常记录,已收藏
+                throw new RuntimeException("该商品已收藏");
+            }
         }
 
+        // 不存在则新增
         UserFavoriteProduct favorite = new UserFavoriteProduct();
         favorite.setUserId(userId);
         favorite.setProductId(productId);

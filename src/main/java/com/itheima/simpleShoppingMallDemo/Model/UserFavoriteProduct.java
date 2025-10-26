@@ -14,6 +14,6 @@ public class UserFavoriteProduct {
     private Long productId;
     @TableField(value = "created_at", fill = FieldFill.INSERT)
     private Timestamp createdAt;
-//    @TableLogic@TableField("hidden")
+    @TableField
     private Integer hidden;
 }
