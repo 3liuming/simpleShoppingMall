@@ -32,7 +32,7 @@ public class ShipmentServiceImpl extends ServiceImpl<ShipmentMapper, Shipment> i
     @Override
     public boolean updateShipmentStatus(Long shippingId, Long status) {
         LambdaUpdateWrapper<Shipment> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(Shipment::getShippingId, shippingId)
+        wrapper.eq(Shipment::getShipmentId, shippingId)
                 .set(Shipment::getShipmentStatus, status);
 
         // 如果状态是已发货(1)，更新发货时间
@@ -50,7 +50,7 @@ public class ShipmentServiceImpl extends ServiceImpl<ShipmentMapper, Shipment> i
     @Override
     public boolean updateTrackingInfo(Long shippingId, String trackingNumber) {
         LambdaUpdateWrapper<Shipment> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(Shipment::getShippingId, shippingId)
+        wrapper.eq(Shipment::getShipmentId, shippingId)
                 .set(Shipment::getTrackingNumber, trackingNumber);
         return this.update(wrapper);
     }

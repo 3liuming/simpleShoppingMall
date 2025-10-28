@@ -17,6 +17,7 @@ public class Product {
     private Integer stock;
     private Long categoryId;
     private String productUrl;
+    private String address;
     @TableField(fill = FieldFill.INSERT)
     private Timestamp createdAt;
     @TableField(fill = FieldFill.INSERT_UPDATE)

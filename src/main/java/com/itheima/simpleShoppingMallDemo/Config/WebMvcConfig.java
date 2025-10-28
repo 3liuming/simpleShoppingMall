@@ -32,7 +32,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/favicon.ico",
                         "/home/catlist",
                         "/home/prolist",
-                        "/home/bycategory"
+                        "/home/bycategory",
+                        "/admin/**"//管理员接口
+
                 );
     }
 }
