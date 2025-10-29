@@ -2,7 +2,7 @@ package com.itheima.simpleShoppingMallDemo.Controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.simpleShoppingMallDemo.Model.Product;
-import com.itheima.simpleShoppingMallDemo.ModelDto.ProductVO;
+import com.itheima.simpleShoppingMallDemo.ModelVO.ProductVO;
 import com.itheima.simpleShoppingMallDemo.Service.admin.Admin_ProductService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import jakarta.servlet.http.HttpServletRequest;

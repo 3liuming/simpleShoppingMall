@@ -3,7 +3,7 @@ package com.itheima.simpleShoppingMallDemo.Controller.admin;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.simpleShoppingMallDemo.Model.Shipment;
-import com.itheima.simpleShoppingMallDemo.ModelDto.Admin_ShipmentVO;
+import com.itheima.simpleShoppingMallDemo.ModelVO.Admin_ShipmentVO;
 import com.itheima.simpleShoppingMallDemo.Service.admin.Admin_ShipmentService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;

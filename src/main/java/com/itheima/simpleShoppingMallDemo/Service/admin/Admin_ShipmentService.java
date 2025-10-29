@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.simpleShoppingMallDemo.Mapper.*;
 import com.itheima.simpleShoppingMallDemo.Model.*;
-import com.itheima.simpleShoppingMallDemo.ModelDto.Admin_ShipmentVO;
+import com.itheima.simpleShoppingMallDemo.ModelVO.Admin_ShipmentVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

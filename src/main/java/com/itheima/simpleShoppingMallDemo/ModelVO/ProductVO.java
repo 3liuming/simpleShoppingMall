@@ -1,4 +1,4 @@
-package com.itheima.simpleShoppingMallDemo.ModelDto;
+package com.itheima.simpleShoppingMallDemo.ModelVO;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;

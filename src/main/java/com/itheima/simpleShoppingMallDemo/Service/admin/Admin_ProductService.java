@@ -2,7 +2,6 @@ package com.itheima.simpleShoppingMallDemo.Service.admin;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -10,11 +9,10 @@ import com.itheima.simpleShoppingMallDemo.Mapper.CategoryMapper;
 import com.itheima.simpleShoppingMallDemo.Mapper.ProductMapper;
 import com.itheima.simpleShoppingMallDemo.Model.Category;
 import com.itheima.simpleShoppingMallDemo.Model.Product;
-import com.itheima.simpleShoppingMallDemo.ModelDto.ProductVO;
+import com.itheima.simpleShoppingMallDemo.ModelVO.ProductVO;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
