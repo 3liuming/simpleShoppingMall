@@ -3,6 +3,7 @@ package com.itheima.simpleShoppingMallDemo.Controller.admin;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.simpleShoppingMallDemo.Model.Comment;
+import com.itheima.simpleShoppingMallDemo.ModelVO.CommentVO;
 import com.itheima.simpleShoppingMallDemo.Service.admin.Admin_CommentService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,13 @@ public class Admin_CommentController {
      * 分页查询评论列表(关联用户信息)
      */
     @GetMapping("/page")
-    public Result<IPage<Comment>> getCommentPage(
+    public Result<IPage<CommentVO>> getCommentPage(
             @RequestParam(defaultValue = "1") Integer current,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) Long productId) {
-        Page<Comment> page = new Page<>(current, size);
-        IPage<Comment> result = commentService.getCommentPage(page, userId, productId);
+        Page<CommentVO> page = new Page<>(current, size);
+        IPage<CommentVO> result = commentService.getCommentPage(page, userId, productId);
         return Result.success(result);
     }
 

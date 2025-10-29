@@ -3,6 +3,7 @@ package com.itheima.simpleShoppingMallDemo.Controller.admin;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.simpleShoppingMallDemo.Model.UserFavoriteProduct;
+import com.itheima.simpleShoppingMallDemo.ModelVO.UserFavoriteProductVO;
 import com.itheima.simpleShoppingMallDemo.Service.admin.Admin_UserFavoriteProductService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,13 @@ public class Admin_UserFavoriteProductController {
      * 分页查询收藏列表(关联用户信息)
      */
     @GetMapping("/page")
-    public Result<IPage<UserFavoriteProduct>> getFavoritePage(
+    public Result<IPage<UserFavoriteProductVO>> getFavoritePage(
             @RequestParam(defaultValue = "1") Integer current,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) Long productId) {
-        Page<UserFavoriteProduct> page = new Page<>(current, size);
-        IPage<UserFavoriteProduct> result = favoriteService.getFavoritePage(page, userId, productId);
+        Page<UserFavoriteProductVO> page = new Page<>(current, size);
+        IPage<UserFavoriteProductVO> result = favoriteService.getFavoritePage(page, userId, productId);
         return Result.success(result);
     }
 

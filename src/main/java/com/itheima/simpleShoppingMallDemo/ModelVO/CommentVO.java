@@ -2,6 +2,7 @@ package com.itheima.simpleShoppingMallDemo.ModelVO;
 
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,9 +18,11 @@ public class CommentVO {
 
     private Long productId;
 
+    private String name;
+
     private String content;
 
     private String commentImageUrl;
 
-    private LocalDateTime createdAt;
+    private Timestamp createdAt;
 }

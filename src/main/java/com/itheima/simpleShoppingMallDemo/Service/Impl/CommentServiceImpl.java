@@ -1,5 +1,6 @@
 package com.itheima.simpleShoppingMallDemo.Service.Impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.simpleShoppingMallDemo.Mapper.CommentMapper;
 import com.itheima.simpleShoppingMallDemo.Model.Comment;
@@ -70,5 +71,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment>
     @Override
     public List<CommentVO> getCommentsByProductId(Long productId) {
         return commentMapper.selectCommentsByProductId(productId);
+    }
+
+    @Override
+    public boolean getCommentIdExitByUserIdAndPid(Long userId, Long pid) {
+        return commentMapper.selectCount(
+                new LambdaQueryWrapper<Comment>()
+                        .eq(Comment::getUserId, userId)
+                        .eq(Comment::getProductId, pid)
+                        .eq(Comment::getHidden,0)
+        ) > 0;
     }
 }

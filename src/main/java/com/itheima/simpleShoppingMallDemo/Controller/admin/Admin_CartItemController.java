@@ -3,6 +3,7 @@ package com.itheima.simpleShoppingMallDemo.Controller.admin;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.simpleShoppingMallDemo.Model.CartItem;
+import com.itheima.simpleShoppingMallDemo.ModelVO.CartItemVO;
 import com.itheima.simpleShoppingMallDemo.Service.admin.Admin_CartItemService;
 import com.itheima.simpleShoppingMallDemo.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,13 @@ public class Admin_CartItemController {
      * 分页查询购物车列表
      */
     @GetMapping("/page")
-    public Result<IPage<CartItem>> getCartItemPage(
+    public Result<IPage<CartItemVO>> getCartItemPage(
             @RequestParam(defaultValue = "1") Integer current,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) Long productId) {
-        Page<CartItem> page = new Page<>(current, size);
-        IPage<CartItem> result = cartItemService.getCartItemPage(page, userId, productId);
+        Page<CartItemVO> page = new Page<>(current, size);
+        IPage<CartItemVO> result = cartItemService.getCartItemPage(page, userId, productId);
         return Result.success(result);
     }
 

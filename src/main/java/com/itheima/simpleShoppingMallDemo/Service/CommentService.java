@@ -23,4 +23,6 @@ public interface CommentService extends IService<Comment> {
      * 查询商品的所有评论
      */
     List<CommentVO> getCommentsByProductId(Long productId);
+
+    boolean getCommentIdExitByUserIdAndPid(Long userId,Long pid);
 }

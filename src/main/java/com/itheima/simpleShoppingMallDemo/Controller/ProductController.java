@@ -123,6 +123,16 @@ public class ProductController {
         return result;
     }
 
+    @GetMapping("/isExist/{productId}")
+    public Result<Boolean> getCommentIdExitByUserIdAndPid(@PathVariable Long productId,
+                                                          HttpServletRequest request){
+        if(commentService.getCommentIdExitByUserIdAndPid((Long)request.getAttribute("userId"),productId )){
+            return Result.success(true);
+        }else {
+            return Result.fail("false,已经发表评论");
+        }
+    }
+
     //以下接口已废弃
     @PostMapping("/create")
     public Result<Boolean> createOrderByUsernameAndQuantityAndPid(@RequestBody OrderItem orderItem,
