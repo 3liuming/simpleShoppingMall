@@ -123,14 +123,19 @@ public class ProductController {
         return result;
     }
 
-    @GetMapping("/isExist/{productId}")
+    @GetMapping("/hasCommented/{productId}")
     public Result<Boolean> getCommentIdExitByUserIdAndPid(@PathVariable Long productId,
                                                           HttpServletRequest request){
-        if(commentService.getCommentIdExitByUserIdAndPid((Long)request.getAttribute("userId"),productId )){
-            return Result.success(true);
-        }else {
-            return Result.fail("false,已经发表评论");
+        Long userId = (Long) request.getAttribute("userId");
+        boolean hasCommented = commentService.getCommentIdExitByUserIdAndPid(userId, productId);
+
+        // 修改点：统一返回成功状态，用 data 字段表示是否已评论
+        if (hasCommented) {
+            return Result.success(true);  // 已评论
+        } else {
+            return Result.success(false); // 未评论
         }
+
     }
 
     //以下接口已废弃
