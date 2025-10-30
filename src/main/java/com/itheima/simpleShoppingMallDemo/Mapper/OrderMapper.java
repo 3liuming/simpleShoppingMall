@@ -13,6 +13,7 @@ public interface OrderMapper extends BaseMapper<Order> {
     @Select("""
             SELECT
                 o.order_id AS orderId,
+                oi.order_item_id,
                 o.status,
                 oi.product_id,
                 p.name AS productName,
@@ -31,6 +32,7 @@ public interface OrderMapper extends BaseMapper<Order> {
     @Select("""
             SELECT
                 o.order_id AS orderId,
+                oi.order_item_id,
                 o.status,
                 oi.product_id,
                 p.name AS productName,
@@ -50,6 +52,7 @@ public interface OrderMapper extends BaseMapper<Order> {
     @Select("""
             SELECT
                 o.order_id AS orderId,
+                oi.order_item_id,
                 o.status,
                 oi.product_id,
                 p.name AS productName,

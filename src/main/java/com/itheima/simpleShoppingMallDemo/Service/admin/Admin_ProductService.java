@@ -11,9 +11,11 @@ import com.itheima.simpleShoppingMallDemo.Model.Category;
 import com.itheima.simpleShoppingMallDemo.Model.Product;
 import com.itheima.simpleShoppingMallDemo.ModelVO.ProductVO;
 import com.itheima.simpleShoppingMallDemo.common.Result;
+import com.itheima.simpleShoppingMallDemo.common.UploadImage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class Admin_ProductService extends ServiceImpl<ProductMapper, Product> implements IService<Product> {
 
     private final ProductMapper productMapper;
@@ -45,6 +48,17 @@ public class Admin_ProductService extends ServiceImpl<ProductMapper, Product> im
         if (product.getCategoryId() == null) {
             return Result.fail("商品类型不能为空");
         }
+        if (product.getProductUrl() == null){
+            return Result.fail("商品图片不能为空");
+        }
+        //插入图片
+        String imgUrl = UploadImage.uploadPostImage(product.getProductUrl(),"/product/");
+        //验证图片是否插入成功
+        if (imgUrl.startsWith("图片") || imgUrl.startsWith("保存失败")){
+            throw new RuntimeException(imgUrl);
+        }
+        //将图片的相对路径存储到product中
+        product.setProductUrl(imgUrl);
 
         // 验证类型是否存在
         Category category = categoryMapper.selectById(product.getCategoryId());
@@ -99,6 +113,18 @@ public class Admin_ProductService extends ServiceImpl<ProductMapper, Product> im
                 return Result.fail("商品类型不存在或已删除");
             }
         }
+
+        //判断不为空，而且传入了base64位字符串，且不为相对路径
+        if (product.getProductUrl() != null && product.getProductUrl().length() > 50){
+            String imgUrl = UploadImage.uploadPostImage(product.getProductUrl(),"/product/");
+            //验证图片是否插入成功
+            if (imgUrl.startsWith("图片") || imgUrl.startsWith("保存失败")){
+                throw new RuntimeException(imgUrl);
+            }
+            //将图片的相对路径存储到product中
+            product.setProductUrl(imgUrl);
+        }
+        //插入图片
 
         boolean success = this.updateById(product);
         if (success) {

@@ -76,7 +76,7 @@ public class BuyServiceImpl extends ServiceImpl<OrderMapper, Order> implements B
     // 创建订单并处理库存更新（支持单品和购物车）
     @Override
     @Transactional
-    public Result<Long> createOrderByUsernameAndQuantityAndPid(Long userId, CartBuyDto cartBuyDto) {
+    public Result<List<Long>> createOrderByUsernameAndQuantityAndPid(Long userId, CartBuyDto cartBuyDto) {
         // 1. 获取订单商品列表（单品或购物车）
         List<OrderItemDto> orderItemDtos = getOrderItems(userId, cartBuyDto);
 
@@ -84,7 +84,7 @@ public class BuyServiceImpl extends ServiceImpl<OrderMapper, Order> implements B
             return Result.fail("订单商品为空");
         }
 
-        // 2. 检查所有商品库存
+        // 2. 检查所有商品库存并保存商品信息
         for (OrderItemDto itemDto : orderItemDtos) {
             Product product = productMapper.selectById(itemDto.getProductId());
             if (product == null) {
@@ -96,31 +96,32 @@ public class BuyServiceImpl extends ServiceImpl<OrderMapper, Order> implements B
                 return Result.fail("商品库存不足: " + product.getName());
             }
 
-            // 保存商品信息到DTO
             itemDto.setPrice(product.getPrice());
             itemDto.setProduct(product);
         }
 
-        // 3. 计算订单总价
-        BigDecimal totalPrice = orderItemDtos.stream()
-                .map(item -> item.getPrice().multiply(new BigDecimal(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        List<Long> orderIds = new ArrayList<>();
 
-        // 4. 创建订单
-        Order order = new Order();
-        order.setUserId(userId);
-        order.setTotalPrice(totalPrice);
-        order.setStatus(0L); // 待支付
-        order.setAddressId(cartBuyDto.getAddressId()); // 设置收货地址
-        save(order);
-
-        if (order.getOrderId() == null) {
-            throw new RuntimeException("创建订单失败，orderId 为空");
-        }
-
-        // 5. 创建订单明细和发货记录
+        // 3. 为每个商品创建独立的订单
         for (OrderItemDto itemDto : orderItemDtos) {
-            // 创建订单明细
+            // 计算单个商品的总价
+            BigDecimal totalPrice = itemDto.getPrice().multiply(new BigDecimal(itemDto.getQuantity()));
+
+            // 创建订单
+            Order order = new Order();
+            order.setUserId(userId);
+            order.setTotalPrice(totalPrice);
+            order.setStatus(0L); // 待支付
+            order.setAddressId(cartBuyDto.getAddressId());
+            save(order);
+
+            if (order.getOrderId() == null) {
+                throw new RuntimeException("创建订单失败，orderId 为空");
+            }
+
+            orderIds.add(order.getOrderId());
+
+            // 创建订单明细（一个订单一个订单项）
             OrderItem orderItem = new OrderItem();
             orderItem.setOrderId(order.getOrderId());
             orderItem.setProductId(itemDto.getProductId());
@@ -132,7 +133,7 @@ public class BuyServiceImpl extends ServiceImpl<OrderMapper, Order> implements B
                 throw new RuntimeException("订单明细插入失败");
             }
 
-            // 创建发货记录（paymentId 为 null）
+            // 创建发货记录
             Shipment shipment = new Shipment();
             shipment.setOrderId(order.getOrderId());
             shipment.setOrderItemId(orderItem.getOrderItemId());
@@ -141,7 +142,7 @@ public class BuyServiceImpl extends ServiceImpl<OrderMapper, Order> implements B
             shipment.setQuantity(itemDto.getQuantity());
             shipment.setAddressId(cartBuyDto.getAddressId());
             shipment.setShipmentStatus(0L); // 待发货
-            shipment.setPaymentId(null); // 暂时为空，支付时更新
+            shipment.setPaymentId(null);
 
             int shipmentRow = shipmentMapper.insert(shipment);
             if (shipmentRow <= 0) {
@@ -162,14 +163,14 @@ public class BuyServiceImpl extends ServiceImpl<OrderMapper, Order> implements B
             }
         }
 
-        // 6. 如果是购物车结算，清空购物车
+        // 4. 如果是购物车结算，清空购物车
         if (cartBuyDto.getCartItemIds() != null && !cartBuyDto.getCartItemIds().isEmpty()) {
             LambdaUpdateWrapper<CartItem> deleteWrapper = Wrappers.lambdaUpdate();
             deleteWrapper.in(CartItem::getCartItemId, cartBuyDto.getCartItemIds());
             cartItemMapper.delete(deleteWrapper);
         }
 
-        return Result.success(order.getOrderId());
+        return Result.success(orderIds);
     }
 
     // 创建支付并更新余额
@@ -177,69 +178,93 @@ public class BuyServiceImpl extends ServiceImpl<OrderMapper, Order> implements B
     @Transactional
     public Result<Boolean> createPaymentByUsernameAndQuantityAndPid(Long userId, CartBuyDto cartBuyDto) {
         // 1. 先调用创建订单接口
-        Result<Long> orderResult = createOrderByUsernameAndQuantityAndPid(userId, cartBuyDto);
+        Result<List<Long>> orderResult = createOrderByUsernameAndQuantityAndPid(userId, cartBuyDto);
 
         if (!orderResult.isSuccess()) {
             return Result.fail(orderResult.getMessage());
         }
 
-        Long orderId = orderResult.getData();
+        List<Long> orderIds = orderResult.getData();
 
-        // 2. 查询订单信息
-        Order order = orderMapper.selectById(orderId);
-        if (order == null) {
-            throw new RuntimeException("订单查询失败");
+        // 2. 计算所有订单的总金额
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        List<Order> orders = new ArrayList<>();
+
+        for (Long orderId : orderIds) {
+            Order order = orderMapper.selectById(orderId);
+            if (order == null) {
+                throw new RuntimeException("订单查询失败: " + orderId);
+            }
+            orders.add(order);
+            totalAmount = totalAmount.add(order.getTotalPrice());
         }
 
         // 3. 检查用户余额
         User user = userMapper.selectById(userId);
-        if (user.getBalance() == null || order.getTotalPrice() == null
-                || user.getBalance().compareTo(BigDecimal.ZERO) <= 0
-                || order.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0
-                || user.getBalance().compareTo(order.getTotalPrice()) < 0) {
+        if (user.getBalance() == null || totalAmount.compareTo(BigDecimal.ZERO) <= 0
+                || user.getBalance().compareTo(totalAmount) < 0) {
             throw new RuntimeException("余额不足，或值为空/无效");
         }
 
-        // 4. 创建支付记录
-        Payment payment = new Payment();
-        BigDecimal endBalance = user.getBalance().subtract(order.getTotalPrice());
+        // 4. 为每个订单创建支付记录
+        BigDecimal remainingBalance = user.getBalance();
 
-        payment.setUserId(userId);
-        payment.setOrderId(orderId);
-        payment.setAmount(order.getTotalPrice());
-        payment.setStatus(1L); // 支付成功
+        for (Order order : orders) {
+            // 创建支付记录
+            Payment payment = new Payment();
+            payment.setUserId(userId);
+            payment.setOrderId(order.getOrderId());
+            payment.setAmount(order.getTotalPrice());
+            payment.setStatus(1L); // 支付成功
 
-        int paymentResult = paymentMapper.insert(payment);
-        if (paymentResult <= 0) {
-            throw new RuntimeException("支付明细插入失败");
+            int paymentResult = paymentMapper.insert(payment);
+            if (paymentResult <= 0) {
+                throw new RuntimeException("支付明细插入失败");
+            }
+
+            // 更新发货表的 paymentId
+            LambdaUpdateWrapper<Shipment> shipmentUpdateWrapper = Wrappers.lambdaUpdate();
+            shipmentUpdateWrapper
+                    .set(Shipment::getPaymentId, payment.getPaymentId())
+                    .eq(Shipment::getOrderId, order.getOrderId());
+
+            int shipmentUpdateResult = shipmentMapper.update(shipmentUpdateWrapper);
+            if (shipmentUpdateResult <= 0) {
+                throw new RuntimeException("发货表 paymentId 更新失败");
+            }
+
+            // 创建余额使用记录
+            BigDecimal balanceAfter = remainingBalance.subtract(order.getTotalPrice());
+
+            BalanceUsageRecord balanceUsageRecord = new BalanceUsageRecord();
+            balanceUsageRecord.setUserId(userId);
+            balanceUsageRecord.setPaymentId(payment.getPaymentId());
+            balanceUsageRecord.setBalanceBefore(remainingBalance);
+            balanceUsageRecord.setBalanceUsed(order.getTotalPrice());
+            balanceUsageRecord.setBalanceAfter(balanceAfter);
+            balanceUsageRecord.setTransactionType("消费");
+
+            int recordResult = balanceUsageRecordMapper.insert(balanceUsageRecord);
+            if (recordResult <= 0) {
+                throw new RuntimeException("余额使用记录插入失败");
+            }
+
+            remainingBalance = balanceAfter;
+
+            // 更新订单状态为已支付
+            LambdaUpdateWrapper<Order> orderUpdateWrapper = Wrappers.lambdaUpdate();
+            orderUpdateWrapper
+                    .set(Order::getStatus, 1L)
+                    .eq(Order::getOrderId, order.getOrderId());
+
+            int orderUpdateResult = orderMapper.update(orderUpdateWrapper);
+            if (orderUpdateResult <= 0) {
+                throw new RuntimeException("订单状态更新失败");
+            }
         }
 
-        // 5. 更新发货表的 paymentId
-        LambdaUpdateWrapper<Shipment> shipmentUpdateWrapper = Wrappers.lambdaUpdate();
-        shipmentUpdateWrapper
-                .set(Shipment::getPaymentId, payment.getPaymentId())
-                .eq(Shipment::getOrderId, orderId);
-
-        int shipmentUpdateResult = shipmentMapper.update(shipmentUpdateWrapper);
-        if (shipmentUpdateResult <= 0) {
-            throw new RuntimeException("发货表 paymentId 更新失败");
-        }
-
-        // 6. 创建余额使用记录
-        BalanceUsageRecord balanceUsageRecord = new BalanceUsageRecord();
-        balanceUsageRecord.setUserId(userId);
-        balanceUsageRecord.setPaymentId(payment.getPaymentId());
-        balanceUsageRecord.setBalanceBefore(user.getBalance());
-        balanceUsageRecord.setBalanceUsed(order.getTotalPrice());
-        balanceUsageRecord.setBalanceAfter(endBalance);
-        balanceUsageRecord.setTransactionType("消费");
-
-        int recordResult = balanceUsageRecordMapper.insert(balanceUsageRecord);
-        if (recordResult <= 0) {
-            throw new RuntimeException("余额使用记录插入失败");
-        }
-
-        // 7. 更新用户余额
+        // 5. 更新用户余额（一次性扣除总金额）
+        BigDecimal endBalance = user.getBalance().subtract(totalAmount);
         LambdaUpdateWrapper<User> updateWrapper = Wrappers.lambdaUpdate();
         updateWrapper
                 .set(User::getBalance, endBalance)
@@ -248,17 +273,6 @@ public class BuyServiceImpl extends ServiceImpl<OrderMapper, Order> implements B
         int balanceUpdateResult = userMapper.update(updateWrapper);
         if (balanceUpdateResult <= 0) {
             throw new RuntimeException("用户余额更新失败");
-        }
-
-        // 8. 更新订单状态为已支付
-        LambdaUpdateWrapper<Order> orderUpdateWrapper = Wrappers.lambdaUpdate();
-        orderUpdateWrapper
-                .set(Order::getStatus, 1L)
-                .eq(Order::getOrderId, orderId);
-
-        int orderUpdateResult = orderMapper.update(orderUpdateWrapper);
-        if (orderUpdateResult <= 0) {
-            throw new RuntimeException("订单状态更新失败");
         }
 
         return Result.success(true);
